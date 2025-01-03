@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlaySO", "PlaySO.csproj", "{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupPlayOS", "..\SetupPlayOS\SetupPlayOS.vdproj", "{7149694D-507C-41CE-8EA9-39DFA4B44725}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,8 @@ Global
 		{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7149694D-507C-41CE-8EA9-39DFA4B44725}.Debug|Any CPU.ActiveCfg = Debug
+		{7149694D-507C-41CE-8EA9-39DFA4B44725}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

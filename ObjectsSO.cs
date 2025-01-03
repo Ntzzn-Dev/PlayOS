@@ -1,4 +1,5 @@
-using System.Drawing.Imaging;
+using System.Collections;
+using System.ServiceModel.Channels;
 using Microsoft.Data.Sqlite;
 
 public class Aplicativos {
@@ -15,12 +16,11 @@ public class Aplicativos {
     {
         try
         {
-            string connectionString = "Data Source=applicationsShortcuts.db";
-
+            string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "applicationsShortcuts.db");
+            string connectionString = $"Data Source={dbPath}";
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
-                
                 string selectCommand = "SELECT Nome, Caminho, Icon FROM AplicativosExtras WHERE Id = @id";
                 using (var command = new SqliteCommand(selectCommand, connection))
                 {
@@ -31,7 +31,6 @@ public class Aplicativos {
                         {
                             string nome = reader.GetString(0);
                             string caminho = reader.GetString(1);
-                            
                             long tamanhoBlobImg = reader.GetBytes(2, 0, null, 0, 0);
 
                             byte[] bufferImg = new byte[tamanhoBlobImg];
@@ -57,14 +56,15 @@ public class Aplicativos {
         }
     }
 
-    public void Salvar(Aplicativos appParaSalvamento){
+    public static void Salvar(Aplicativos appParaSalvamento){
         try
         {
             string nome = appParaSalvamento.getNomeAplicativo();
             string url = appParaSalvamento.getCaminhoAplicativo();
-            byte[] icnEmBytes = Atalhos.ImageToByteArray(appParaSalvamento.getIconeAplicativo());
+            byte[] icnEmBytes = Referencias.ImageToByteArray(appParaSalvamento.getIconeAplicativo());
 
-            string connectionString = "Data Source=applicationsShortcuts.db";
+            string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "applicationsShortcuts.db");
+            string connectionString = $"Data Source={dbPath}";
 
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -86,15 +86,16 @@ public class Aplicativos {
             MessageBox.Show($"Erro ao adicionar o atalho: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
-    public void Alterar(Aplicativos appParaAlteracao){
+    public static void Alterar(Aplicativos appParaAlteracao){
         try
         {
             int idDeAlteracao = appParaAlteracao.getIdAplicativo();
             string nome = appParaAlteracao.getNomeAplicativo();
             string caminho = appParaAlteracao.getCaminhoAplicativo();
-            byte[] imgEmBytes = Atalhos.ImageToByteArray(appParaAlteracao.getIconeAplicativo());
+            byte[] imgEmBytes = Referencias.ImageToByteArray(appParaAlteracao.getIconeAplicativo());
 
-            string connectionString = "Data Source=applicationsShortcuts.db";
+            string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "applicationsShortcuts.db");
+            string connectionString = $"Data Source={dbPath}";
             
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -122,6 +123,36 @@ public class Aplicativos {
         {
             MessageBox.Show($"Erro ao alterar o atalho: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+    }
+    public static ArrayList ConsultarIDs(){
+        ArrayList idsApps = new ArrayList();
+        try
+        {
+            string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "applicationsShortcuts.db");
+            string connectionString = $"Data Source={dbPath}";
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+
+                string selectCommand = "SELECT Id FROM AplicativosExtras";
+                using (var command = new SqliteCommand(selectCommand, connection))
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int id = reader.GetInt32(0);
+
+                        idsApps.Add(id);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erro ao listar aplicativos: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        return idsApps;
     }
 
     public int getIdAplicativo(){
@@ -166,7 +197,8 @@ public class Atalhos {
     {
         try
         {
-            string connectionString = "Data Source=applicationsShortcuts.db";
+            string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "applicationsShortcuts.db");
+            string connectionString = $"Data Source={dbPath}";
 
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -213,6 +245,7 @@ public class Atalhos {
                         }
                     }
                 }
+                connection.Close();
             }
         }
         catch (Exception ex)
@@ -221,16 +254,17 @@ public class Atalhos {
         }
     }
 
-    public void Salvar(Atalhos atalhoParaSalvamento){
+    public static void Salvar(Atalhos atalhoParaSalvamento){
         try
         {
             string nome = atalhoParaSalvamento.getNomeAtalho();
             string caminho = atalhoParaSalvamento.getCaminhoAtalho();
             string parametro = atalhoParaSalvamento.getParametroAtalho();
-            byte[] imgEmBytes = ImageToByteArray(atalhoParaSalvamento.getImgAtalho());
-            byte[] icnEmBytes = ImageToByteArray(atalhoParaSalvamento.getIconeAtalho());
+            byte[] imgEmBytes = Referencias.ImageToByteArray(atalhoParaSalvamento.getImgAtalho());
+            byte[] icnEmBytes = Referencias.ImageToByteArray(atalhoParaSalvamento.getIconeAtalho());
 
-            string connectionString = "Data Source=applicationsShortcuts.db";
+            string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "applicationsShortcuts.db");
+            string connectionString = $"Data Source={dbPath}";
 
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -247,6 +281,7 @@ public class Atalhos {
 
                     command.ExecuteNonQuery();
                 }
+                connection.Close();
             }
         }
         catch (Exception ex)
@@ -254,17 +289,18 @@ public class Atalhos {
             MessageBox.Show($"Erro ao adicionar o atalho: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
-    public void Alterar(Atalhos atalhoParaAlteracao){
+    public static void Alterar(Atalhos atalhoParaAlteracao){
         try
         {
             int idDeAlteracao = atalhoParaAlteracao.getIdAtalho();
             string nome = atalhoParaAlteracao.getNomeAtalho();
             string caminho = atalhoParaAlteracao.getCaminhoAtalho();
             string parametro = atalhoParaAlteracao.getParametroAtalho();
-            byte[] imgEmBytes = ImageToByteArray(atalhoParaAlteracao.getImgAtalho());
-            byte[] icnEmBytes = ImageToByteArray(atalhoParaAlteracao.getIconeAtalho());
+            byte[] imgEmBytes = Referencias.ImageToByteArray(atalhoParaAlteracao.getImgAtalho());
+            byte[] icnEmBytes = Referencias.ImageToByteArray(atalhoParaAlteracao.getIconeAtalho());
 
-            string connectionString = "Data Source=applicationsShortcuts.db";
+            string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "applicationsShortcuts.db");
+            string connectionString = $"Data Source={dbPath}";
             
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -289,6 +325,7 @@ public class Atalhos {
 
                     command.ExecuteNonQuery();
                 }
+                connection.Close();
             }
         }
         catch (Exception ex)
@@ -296,10 +333,11 @@ public class Atalhos {
             MessageBox.Show($"Erro ao alterar o atalho: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
-    public void Deletar(int idDeExclusao){
+    public static void Deletar(int idDeExclusao){
         try
         {
-            string connectionString = "Data Source=applicationsShortcuts.db";
+            string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "applicationsShortcuts.db");
+            string connectionString = $"Data Source={dbPath}";
 
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -316,6 +354,7 @@ public class Atalhos {
                     if (rowsAffected > 0) { MessageBox.Show("Atalho excluído com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information); }
                     else { MessageBox.Show("Nenhum atalho encontrado com esse id.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning); }*/
                 }
+                connection.Close();
             }
         }
         catch (Exception ex)
@@ -323,6 +362,39 @@ public class Atalhos {
             // Exibe uma mensagem de erro caso ocorra alguma exceção
             MessageBox.Show($"Erro ao excluir o atalho: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+    }
+    public static ArrayList ConsultarIDs(){
+        ArrayList ids = new ArrayList();
+        try
+        {
+            string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "applicationsShortcuts.db");
+            string connectionString = $"Data Source={dbPath}";
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+
+                string selectCommand = "SELECT Id FROM AtalhosdeAplicativos";
+                using (var command = new SqliteCommand(selectCommand, connection))
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            int id = reader.GetInt32(0);
+                            ids.Add(id);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erro ao listar ids: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        return ids;
     }
 
     public int getIdAtalho(){
@@ -360,6 +432,17 @@ public class Atalhos {
     }
     public void setIconeAtalho(Image novoIcon){
         this.icon = novoIcon;
+    }
+}
+
+public class Referencias{
+    public static string caminhoImgPadrao = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Morgan.jpg");
+    public static string caminhoVinheta = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Vinheta.png");
+    public static string caminhoGifCarregamento = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Carregando.gif");
+    public static string caminhoPicAppsShow = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "PicAppsShow.png");
+    public static string caminhoPicAppsHide = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "PicAppsHide.png");
+    public Referencias(){
+
     }
 
     public static byte[] ImageToByteArray(Image image)

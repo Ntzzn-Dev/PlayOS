@@ -29,7 +29,6 @@ partial class Form3
     private void InitializeComponent()
     {
         components = new System.ComponentModel.Container();
-        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form3));
         btnNext = new Button();
         pictureBox1 = new PictureBox();
         btnPrev = new Button();
@@ -46,6 +45,8 @@ partial class Form3
         picPuxarApps = new PictureBox();
         pnlApps = new Panel();
         pnlAppTransition = new System.Windows.Forms.Timer(components);
+        lblClockAtalho = new Label();
+        lblDataAtalhos = new Label();
         ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
         ((System.ComponentModel.ISupportInitialize)iconPic).BeginInit();
         ((System.ComponentModel.ISupportInitialize)appIcon).BeginInit();
@@ -113,11 +114,11 @@ partial class Form3
         nameGame.AutoSize = true;
         nameGame.BackColor = Color.Transparent;
         nameGame.FlatStyle = FlatStyle.Flat;
-        nameGame.Font = new Font("Segoe UI Black", 24F, FontStyle.Bold, GraphicsUnit.Point, 0);
+        nameGame.Font = new Font("Segoe UI", 24F, FontStyle.Bold, GraphicsUnit.Point, 0);
         nameGame.ForeColor = SystemColors.ControlDarkDark;
         nameGame.Location = new Point(1220, 535);
         nameGame.Name = "nameGame";
-        nameGame.Size = new Size(250, 45);
+        nameGame.Size = new Size(243, 45);
         nameGame.TabIndex = 12;
         nameGame.Text = "Nome do Jogo";
         nameGame.TextAlign = ContentAlignment.MiddleRight;
@@ -218,13 +219,12 @@ partial class Form3
         // picPuxarApps
         // 
         picPuxarApps.Anchor = AnchorStyles.Top;
-        picPuxarApps.BackColor = Color.Transparent;
-        picPuxarApps.Image = (Image)resources.GetObject("picPuxarApps.Image");
+        picPuxarApps.BackColor = Color.FromArgb(70, 70, 70);
         picPuxarApps.Location = new Point(752, 0);
         picPuxarApps.Margin = new Padding(0);
         picPuxarApps.Name = "picPuxarApps";
-        picPuxarApps.Size = new Size(158, 26);
-        picPuxarApps.SizeMode = PictureBoxSizeMode.StretchImage;
+        picPuxarApps.Size = new Size(158, 41);
+        picPuxarApps.SizeMode = PictureBoxSizeMode.Zoom;
         picPuxarApps.TabIndex = 0;
         picPuxarApps.TabStop = false;
         // 
@@ -242,9 +242,41 @@ partial class Form3
         // 
         pnlAppTransition.Interval = 10;
         // 
+        // lblClockAtalho
+        // 
+        lblClockAtalho.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        lblClockAtalho.AutoSize = true;
+        lblClockAtalho.BackColor = Color.Transparent;
+        lblClockAtalho.Font = new Font("Verdana", 24F, FontStyle.Bold, GraphicsUnit.Point, 0);
+        lblClockAtalho.ForeColor = SystemColors.ControlDarkDark;
+        lblClockAtalho.Location = new Point(1346, 88);
+        lblClockAtalho.Name = "lblClockAtalho";
+        lblClockAtalho.RightToLeft = RightToLeft.No;
+        lblClockAtalho.Size = new Size(186, 38);
+        lblClockAtalho.TabIndex = 23;
+        lblClockAtalho.Text = "12:12 PM";
+        lblClockAtalho.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // lblDataAtalhos
+        // 
+        lblDataAtalhos.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        lblDataAtalhos.AutoSize = true;
+        lblDataAtalhos.BackColor = Color.Transparent;
+        lblDataAtalhos.Font = new Font("Verdana", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+        lblDataAtalhos.ForeColor = SystemColors.ControlDark;
+        lblDataAtalhos.Location = new Point(1342, 126);
+        lblDataAtalhos.Name = "lblDataAtalhos";
+        lblDataAtalhos.RightToLeft = RightToLeft.No;
+        lblDataAtalhos.Size = new Size(183, 16);
+        lblDataAtalhos.TabIndex = 24;
+        lblDataAtalhos.Text = "12 de setembro de 2012";
+        lblDataAtalhos.TextAlign = ContentAlignment.MiddleCenter;
+        // 
         // Form3
         // 
         ClientSize = new Size(1669, 726);
+        Controls.Add(lblDataAtalhos);
+        Controls.Add(lblClockAtalho);
         Controls.Add(picPuxarApps);
         Controls.Add(pnlApps);
         Controls.Add(iconPic);
@@ -261,7 +293,6 @@ partial class Form3
         Name = "Form3";
         Text = "GameRoll";
         WindowState = FormWindowState.Maximized;
-
         nameGame.Parent = pictureBox1; 
         pathGame.Parent = pictureBox1;
         btnNext.Parent = pictureBox1; 
@@ -273,7 +304,8 @@ partial class Form3
         btnFechar.Parent = pictureBox1;
         iconPic.Parent = pictureBox1;
         picPuxarApps.Parent = pictureBox1;
-        
+        lblClockAtalho.Parent = pictureBox1;
+        lblDataAtalhos.Parent = pictureBox1;
         ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
         ((System.ComponentModel.ISupportInitialize)iconPic).EndInit();
         ((System.ComponentModel.ISupportInitialize)appIcon).EndInit();
@@ -294,6 +326,8 @@ partial class Form3
         btnFechar.Parent = pictureBox1;
         iconPic.Parent = pictureBox1;
         picPuxarApps.Parent = pictureBox1;
+        lblClockAtalho.Parent = pictureBox1;
+        lblDataAtalhos.Parent = pictureBox1;
     */
 
     #endregion
@@ -322,4 +356,6 @@ partial class Form3
     private Label lblNomeApp;
     private Panel pnlApps;
     private System.Windows.Forms.Timer pnlAppTransition;
+    private Label lblClockAtalho;
+    private Label lblDataAtalhos;
 }

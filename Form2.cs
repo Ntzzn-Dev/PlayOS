@@ -3,15 +3,15 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
-using Microsoft.Data.Sqlite;
-using System.Runtime.InteropServices;
 using SkiaSharp;
+using Microsoft.Win32;
+using Microsoft.Data.Sqlite;
+using System.Collections;
 
 public partial class Form2 : Form
 {
     private int idDeAlteracao = 0, imgCarregada = 0;
     private Image img, icn;
-    public static string caminhoImgPadrao = @".\Assets\Morgan.jpg";
     public Form2()
     {
         InitializeComponent();
@@ -23,23 +23,27 @@ public partial class Form2 : Form
         InitializeComponent();
         DefinirGatilhos();
 
-        if(tipoDeEdicao == 0){
-            DadosAtalho(id);
-            tabPageCdtApps.Enabled = false;
-            if (idDeAlteracao != 0) { btnSalvar.Click -= BtnSalvarAtalho; btnSalvar.Click += (s, e) => AlterarAtalho(); }
-        } else
-        if(tipoDeEdicao == 1){
-            DadosApp(id);
-            tabAbasCadastros.SelectedIndex = 1;
-            tabPageCdtAtalho.Enabled = false;
-            if (idDeAlteracao != 0) { btnSalvarApp.Click -= BtnSalvarApp; btnSalvarApp.Click += (s, e) => AlterarApp(); }
+        switch (tipoDeEdicao)
+        {
+            case 0:
+                DadosAtalho(id);
+                tabPageCdtApps.Enabled = false;
+                if (idDeAlteracao != 0) { btnSalvar.Click -= BtnSalvarAtalho; btnSalvar.Click += (s, e) => AlterarAtalho(); }
+                break;
+            case 1:
+                DadosApp(id);
+                tabAbasCadastros.SelectedIndex = 1;
+                tabPageCdtAtalho.Enabled = false;
+                if (idDeAlteracao != 0) { btnSalvarApp.Click -= BtnSalvarApp; btnSalvarApp.Click += (s, e) => AlterarApp(); }
+                break;
         }
+    
     }
     //Primeira aba - Atalhos
     private void DefinirImgsPadrao()
     {
-        img = Image.FromFile(caminhoImgPadrao);
-        icn = Image.FromFile(caminhoImgPadrao);
+        img = Image.FromFile(Referencias.caminhoImgPadrao);
+        icn = Image.FromFile(Referencias.caminhoImgPadrao);
         pictureImgGame.Image = img;
         pictureIconGame.Image = img;
         picImgIconeApp.Image = img;
@@ -53,7 +57,7 @@ public partial class Form2 : Form
         AtalhoSalvamento.setImgAtalho(img);
         AtalhoSalvamento.setIconeAtalho(icn);
 
-        AtalhoSalvamento.Salvar(AtalhoSalvamento);
+        Atalhos.Salvar(AtalhoSalvamento);
 
         FecharCadastro();
     }
@@ -67,7 +71,7 @@ public partial class Form2 : Form
         atalhoAlteracao.setImgAtalho(img);
         atalhoAlteracao.setIconeAtalho(icn);
 
-        atalhoAlteracao.Alterar(atalhoAlteracao);
+        Atalhos.Alterar(atalhoAlteracao);
 
         FecharCadastro();
     }
@@ -102,7 +106,7 @@ public partial class Form2 : Form
 
         if (destino == "")
         {
-            destino = $@"C:\XboxGames\{nomeAtalho}\Content\gamelaunchhelper.exe";
+            destino = $@"{ObterPastaXbox()}\{nomeAtalho}\Content\gamelaunchhelper.exe";
         }
         if (extensao != "")
         {
@@ -112,20 +116,33 @@ public partial class Form2 : Form
         caminhoGame.Text = destino;
         parametroGame.Text = argumentos;
         nomeGame.Text = nomeAtalho;
-
-        BtnIconeDoExecutavel();
     }
-    private void DefinirImgIcone()
+    private string ObterPastaXbox()
     {
-        if (caminhoGame.Text.Equals("") && File.Exists(caminhoGame.Text) && iconGame.Text.Equals("") && idDeAlteracao == 0)
+        foreach (var drive in DriveInfo.GetDrives())
         {
-            Icon icone = Icon.ExtractAssociatedIcon(caminhoGame.Text);
-            pictureIconGame.Image = icone.ToBitmap();
+            if (drive.IsReady && drive.DriveType == DriveType.Fixed)
+            {
+                string xboxGamesPath = Path.Combine(drive.RootDirectory.FullName, "XboxGames");
+
+                if (Directory.Exists(xboxGamesPath))
+                {
+                    return xboxGamesPath;
+                }
+            }
         }
+        return "";
     }
-    private void BtnIconeDoExecutavel()
+    private bool PegarIds()
     {
-        if (iconGame.Text.Equals("")) { DefinirImgIcone(); }
+        ArrayList ids = Atalhos.ConsultarIDs();
+        
+        if (ids.Count > 0)
+        {
+            return false;
+        }else{
+            return true;
+        }
     }
     public void BtnProcurarExecutavel(object sender, EventArgs e)
     {
@@ -135,7 +152,6 @@ public partial class Form2 : Form
         if (ofd.ShowDialog() == DialogResult.OK)
         {
             caminhoGame.Text = ofd.FileName;
-            BtnIconeDoExecutavel();
         }
     }
     private void BtnImportarAtalho(object sender, EventArgs e)
@@ -197,7 +213,7 @@ public partial class Form2 : Form
         appAtual.setCaminhoAplicativo(txtbxURLApp.Text);
         appAtual.setIconeAplicativo(icn);
 
-        appAtual.Salvar(appAtual);
+        Aplicativos.Salvar(appAtual);
 
         FecharCadastro();
     }
@@ -209,7 +225,7 @@ public partial class Form2 : Form
         appAlteracao.setCaminhoAplicativo(txtbxURLApp.Text);
         appAlteracao.setIconeAplicativo(icn);
 
-        appAlteracao.Alterar(appAlteracao);
+        Aplicativos.Alterar(appAlteracao);
 
         FecharCadastro();
     }
@@ -268,9 +284,8 @@ public partial class Form2 : Form
 
         imgGame.KeyDown += (s, e) => {if(e.KeyCode == Keys.Enter){ BaixarImgs(imgGame.Text, pictureImgGame);}}; 
         iconGame.KeyDown += (s, e) => {if(e.KeyCode == Keys.Enter){ BaixarImgs(iconGame.Text, pictureIconGame);}}; 
-        txtbxImgIconeApp.KeyDown += (s, e) => {if(e.KeyCode == Keys.Enter){ BaixarImgs(txtbxImgIconeApp.Text, picImgIconeApp);}};
-
-        caminhoGame.Leave += (s, e) => BtnIconeDoExecutavel();
+        imgGame.TextChanged += (s, e) => BaixarImgs(imgGame.Text, pictureImgGame);
+        iconGame.TextChanged += (s, e) => BaixarImgs(iconGame.Text, pictureIconGame);
 
         nomeGame.KeyDown += EnterToEndAtalhos;
         caminhoGame.KeyDown += EnterToEndAtalhos;
@@ -287,6 +302,7 @@ public partial class Form2 : Form
         btnCancelarApp.Click += (s, e) => FecharCadastro();
 
         txtbxImgIconeApp.KeyDown += (s, e) => {if(e.KeyCode == Keys.Enter){BaixarImgs(txtbxImgIconeApp.Text, picImgIconeApp);}};
+        txtbxImgIconeApp.TextChanged += (s, e) => BaixarImgs(txtbxImgIconeApp.Text, picImgIconeApp);
 
         txtbxNomeApp.KeyDown += EnterToEndApps;
         txtbxURLApp.KeyDown += EnterToEndApps;
@@ -310,14 +326,25 @@ public partial class Form2 : Form
                 break;
         }
     }
-    private void Reaparecer(Process navigator)
+    private void Reaparecer(string nomeNavegador)
     {
         this.Show();
         this.Owner.Show();
 
-        if (navigator != null && !navigator.HasExited)
+        Process[] navegatorProcesses = Process.GetProcessesByName(nomeNavegador);
+        foreach (var process in navegatorProcesses)
         {
-            navigator.Kill();
+            try
+            {
+                if (process != null && !process.HasExited)
+                {
+                    process.Kill();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao encerrar o processo: {ex.Message}");
+            }
         }
     }
     private void BtnProcurarImgOnline(object sender, EventArgs e)
@@ -335,7 +362,7 @@ public partial class Form2 : Form
 
         try
         {
-            string caminhoNavegador = @"C:\Program Files\Google\Chrome\Application\chrome.exe";
+            string caminhoNavegador = GetDefaultBrowserPath();
 
             Process navegadorAberto;
 
@@ -361,6 +388,35 @@ public partial class Form2 : Form
         {
             MessageBox.Show($"Erro ao abrir o navegador: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+    }
+    private string GetDefaultBrowserPath()
+    {
+        string browserPath = string.Empty;
+
+        string userChoicePath = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice";
+
+        string progId = Registry.GetValue(userChoicePath, "ProgId", null) as string;
+
+        if (string.IsNullOrEmpty(progId))
+            throw new Exception("Navegador padrão não encontrado.");
+
+        string browserRegPath = $@"HKEY_CLASSES_ROOT\{progId}\shell\open\command";
+        browserPath = Registry.GetValue(browserRegPath, null, null) as string;
+
+        if (string.IsNullOrEmpty(browserPath))
+            throw new Exception("Caminho do navegador padrão não encontrado.");
+
+        int firstQuote = browserPath.IndexOf('"');
+        if (firstQuote >= 0)
+        {
+            int secondQuote = browserPath.IndexOf('"', firstQuote + 1);
+            if (secondQuote > firstQuote)
+            {
+                browserPath = browserPath.Substring(firstQuote + 1, secondQuote - firstQuote - 1);
+            }
+        }
+
+        return browserPath;
     }
     public void BtnProcurarImgLocal(object sender, EventArgs e)
     {
@@ -391,11 +447,24 @@ public partial class Form2 : Form
     }
     public void FecharCadastro()
     {
+        if(PegarIds()) { this.Owner.Close(); }
         this.Close();
     }
     private void CriarTelaDeCola(Process navegadorAberto, string acaoTelaCola)
     {
-        if (navegadorAberto == null)
+        if (navegadorAberto != null && !navegadorAberto.HasExited)
+        {
+            string nomeDoProcessador = navegadorAberto.ProcessName;
+            Form4 telaCola = new Form4(navegadorAberto, acaoTelaCola);
+            telaCola.Owner = this;
+            telaCola.FormClosed += (s, e) => Reaparecer(nomeDoProcessador);
+
+            this.Owner.Hide();
+            this.Hide();
+
+            telaCola.ShowDialog();
+        }
+        else
         {
             Form4 telaCola = new Form4(acaoTelaCola);
             telaCola.Owner = this;
@@ -405,37 +474,26 @@ public partial class Form2 : Form
 
             telaCola.ShowDialog();
         }
-        else
-        {
-            Form4 telaCola = new Form4(navegadorAberto, acaoTelaCola);
-            telaCola.Owner = this;
-            telaCola.FormClosed += (s, e) => Reaparecer(navegadorAberto);
-
-            this.Owner.Hide();
-            this.Hide();
-
-            telaCola.ShowDialog();
-        }
-
     }
     private async Task BaixarImgs(string pathToImg, PictureBox pcbxEmUso)
     {
         try
         {
+            string formato = await DetectarFormatoAsync(pathToImg);
             bool eIcone = pcbxEmUso == pictureIconGame || pcbxEmUso == picImgIconeApp;
             byte[] bytesDaImg = new byte[0];
-            string formato = await DetectarFormatoAsync(pathToImg);
-            
+                        
             if (string.IsNullOrEmpty(pathToImg))
             {
                 if (caminhoGame.Text != "")
                 {
-                    pcbxEmUso.Image = Image.FromFile(caminhoImgPadrao);
-                    bytesDaImg = File.ReadAllBytes(caminhoImgPadrao);
+                    pcbxEmUso.Image = Image.FromFile(Referencias.caminhoImgPadrao);
+                    bytesDaImg = File.ReadAllBytes(Referencias.caminhoImgPadrao);
                 }
                 return;
             }
-            if (File.Exists(pathToImg))
+
+            if (formato == "LOCAL")
             {
                 Image imgCarregada = Image.FromFile(pathToImg);
                 if (imgCarregada.Width != imgCarregada.Height && eIcone)
@@ -449,7 +507,7 @@ public partial class Form2 : Form
                     pcbxEmUso.Image = imgCarregada;
                 }
             }
-            else if (pathToImg.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
+            else if (formato == "BASE64")
             {
                 var base64Data = pathToImg.Split(',')[1];
                 byte[] bytesDaImg2 = Convert.FromBase64String(base64Data);
@@ -468,7 +526,28 @@ public partial class Form2 : Form
                         pcbxEmUso.Image = imgCarregada;
                     }
                 }
-            } 
+            }
+            else if (formato == "OUTRO")
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    bytesDaImg = await client.GetByteArrayAsync(pathToImg);
+
+                    using (MemoryStream stream = new MemoryStream(bytesDaImg))
+                    {
+                        Image imgCarregada = Image.FromStream(stream);
+                        if (imgCarregada.Width != imgCarregada.Height && eIcone)
+                        {
+                            iconGame.Text = "";
+                            MessageBox.Show("a imagem deve ser quadrada");
+                        }
+                        else
+                        {
+                            pcbxEmUso.Image = imgCarregada;
+                        }
+                    }
+                }
+            }
             else if (formato == "WEBP")
             {
                 Image imagem = await CarregarImagemWebpAsync(pathToImg);
@@ -501,27 +580,7 @@ public partial class Form2 : Form
                     }
                 }                
             }
-            else
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    bytesDaImg = await client.GetByteArrayAsync(pathToImg);
-
-                    using (MemoryStream stream = new MemoryStream(bytesDaImg))
-                    {
-                        Image imgCarregada = Image.FromStream(stream);
-                        if (imgCarregada.Width != imgCarregada.Height && eIcone)
-                        {
-                            iconGame.Text = "";
-                            MessageBox.Show("a imagem deve ser quadrada");
-                        }
-                        else
-                        {
-                            pcbxEmUso.Image = imgCarregada;
-                        }
-                    }
-                }
-            }
+            else {return;}
 
             if (pcbxEmUso == pictureIconGame || pcbxEmUso == picImgIconeApp)
             {
@@ -533,8 +592,6 @@ public partial class Form2 : Form
             {
                 using (MemoryStream ms = new MemoryStream(bytesDaImg)) { img = Image.FromStream(ms); }
             }
-
-
         }
         catch (Exception ex)
         {
@@ -543,23 +600,28 @@ public partial class Form2 : Form
     }
     private async Task<string> DetectarFormatoAsync(string url)
     {
-        using (HttpClient client = new HttpClient())
-        {
-            byte[] bytes = await client.GetByteArrayAsync(url);
-
-            if (bytes.Length >= 12)
+        if(url.StartsWith("data:", StringComparison.OrdinalIgnoreCase)){ return "BASE64"; } else 
+        if (File.Exists(url)) { return "LOCAL";} else 
+        if (Uri.TryCreate(url, UriKind.Absolute, out Uri? uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
             {
-                string header = BitConverter.ToString(bytes.Take(12).ToArray()).Replace("-", "");
+            using (HttpClient client = new HttpClient())
+            {
+                byte[] bytes = await client.GetByteArrayAsync(url);
 
-                if (header.StartsWith("52494646") && header.Contains("57454250")) // WEBP
-                    return "WEBP";
+                if (bytes.Length >= 12)
+                {
+                    string header = BitConverter.ToString(bytes.Take(12).ToArray()).Replace("-", "");
 
-                if (header.StartsWith("00000100") || header.StartsWith("00000200")) // ICO
-                    return "ICO";
+                    if (header.StartsWith("52494646") && header.Contains("57454250")) // WEBP
+                        return "WEBP";
+
+                    if (header.StartsWith("00000100") || header.StartsWith("00000200")) // ICO
+                        return "ICO";
+                }
+                return "OUTRO";
             }
-
-            return "OUTRO";
         }
+        return "NENHUM";
     }
     private async Task<Image> CarregarImagemWebpAsync(string url)
     {

@@ -8,19 +8,38 @@ using Microsoft.Win32;
 using System.Security.Principal;
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Drawing.Drawing2D;
+using System.Timers;
+using System.Runtime.InteropServices;
 
 public partial class Form3 : Form
 {
+    // Atalhos ========================
     private ArrayList ids = new ArrayList();
-    private List<Aplicativos> appsContext = new List<Aplicativos>();
     private Atalhos atalhoAtual;
+    private Process jogoAberto;
     private int idAtual = 1;
+    // Mandeja ========================
     private NotifyIcon notifyIcon;
-    private Image imgAtual, iconAtual;
+    // Painel APPS ====================
     private bool appsOcultos = true;
     int heightPnlApps;
+    // Temporizadores =================
+    private static System.Timers.Timer temporizadorDoRelogio, timerMonitorarProcessos, timerProcessoEstabilizar;
+    private static DateTime horario;
+    // Processos ======================
+    private HashSet<int> processosIniciados = new HashSet<int>();
+    private const int WM_HOTKEY = 0x0312;
+
+    [DllImport("user32.dll")]
+    private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+    [DllImport("user32.dll")]
+    private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+    [DllImport("user32.dll")]
+    private static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+    [DllImport("user32.dll")]
+    private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
     public Form3()
     {
         this.WindowState = FormWindowState.Maximized;
@@ -28,29 +47,175 @@ public partial class Form3 : Form
 
         InitializeComponent();
 
-        PegarIds();
+        AtalhoPegarIds();
 
         DefinirGatilhos();
 
         CriarNotificacao();
+
+        CriarRelogio();
+        
+        RegisterHotKey(this.Handle, 1, 0, (uint)Keys.NumPad5);                                              //Numpad5
+        RegisterHotKey(this.Handle, 2, (uint)ModifierKeys.Control | (uint)ModifierKeys.Alt , (uint)Keys.T); //Ctrl+Alt+T
     }
 
+    // Atalho para voltar ao app minimizado //
+    
+    [Flags]
+    public enum ModifierKeys : uint
+    {
+        None = 0,
+        Alt = 1,
+        Control = 2,
+        Shift = 4,
+        Windows = 8
+    }
+    protected override void WndProc(ref Message m)
+    {
+        base.WndProc(ref m);
+
+        if (m.Msg == WM_HOTKEY)
+        {
+            int idDoAtalho = m.WParam.ToInt32();
+            if (idDoAtalho == 1)
+            {
+                FecharAtalho();
+                this.Show();
+                this.WindowState = FormWindowState.Maximized;
+            }
+            else if (idDoAtalho == 2) {
+                MessageBox.Show("n fechar");
+            }
+        }
+    }
+    protected override void OnFormClosing(FormClosingEventArgs e)
+    {
+        UnregisterHotKey(this.Handle, 1);
+        UnregisterHotKey(this.Handle, 2);
+        base.OnFormClosing(e);
+    }
+    
+    // Verificar jogo Maximizado //
+    
+    [StructLayout(LayoutKind.Sequential)]
+    private struct WINDOWPLACEMENT
+    {
+        public int length;
+        public int flags;
+        public int showCmd;
+        public POINT ptMinPosition;
+        public POINT ptMaxPosition;
+        public RECT rcNormalPosition;
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    private struct POINT
+    {
+        public int x;
+        public int y;
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    private struct RECT
+    {
+        public int left;
+        public int top;
+        public int right;
+        public int bottom;
+    }
+    public static bool IsFullscreenWithoutBorders(Process processo)
+    {
+        IntPtr handle = processo.MainWindowHandle;
+        if (handle == IntPtr.Zero)
+            return false; // Sem janela principal.
+
+        if (GetWindowRect(handle, out RECT rect))
+        {
+            int width = rect.right - rect.left;
+            int height = rect.bottom - rect.top;
+
+            // Obter a resolução da tela principal.
+            int screenWidth = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
+            int screenHeight = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
+
+            // Comparar dimensões e posição.
+            return width == screenWidth && height == screenHeight && rect.left == 0 && rect.top == 0;
+        }
+
+        return false;
+    }
+
+    // Substituir acao das teclas //
+
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+        if (keyData == Keys.Left)
+        {
+            GamePrev();
+            return true;
+        }
+        else if (keyData == Keys.Right)
+        {
+            GameNext();
+            return true;
+        }
+        if (keyData == Keys.Up)
+        {
+            appsOcultos = false;
+            pnlAppTransition.Start();
+            heightPnlApps = pnlApps.Size.Height;
+            return true;
+        }
+        else if (keyData == Keys.Down)
+        {
+            appsOcultos = true;
+            pnlAppTransition.Start();
+            heightPnlApps = pnlApps.Size.Height;
+            return true;
+        }
+        else if (keyData == Keys.Space)
+        {
+            BtnAbrirAtalho(null, null);
+            return true;
+        }
+
+        return base.ProcessCmdKey(ref msg, keyData);
+    }
+    
+    // Inicio -------------------------------------------------------------------------------------
     private void DefinirGatilhos(){
         this.Load += AoCarregar;
 
         btnAbrir.Click += BtnAbrirAtalho;
         btnFechar.Click += (s, e) => this.Close();
-        btnEditar.Click += BtnEditar;
-        btnAdicionar.Click += (s, e) => AdicionarCadastro();
-        btnDeletar.Click += BtnDeletar;
+        btnEditar.Click += BtnEditarAtalho;
+        btnAdicionar.Click += (s, e) => Cadastrar();
+        btnDeletar.Click += BtnDeletarAtalho;
 
         btnNext.Click += (s, e) => GameNext();
         btnPrev.Click += (s, e) => GamePrev();
 
-        picPuxarApps.Click += BtnPicAlternarApps;
+        picPuxarApps.Click += BtnAlternarAppsOcultos;
 
-        pnlAppTransition.Tick += PicAlternarApps_Transition;
+        pnlAppTransition.Tick += TransicaoAppsOcultos;
     }
+    private void AoCarregar(object sender, EventArgs e)
+    {
+        if(atalhoAtual != null){
+            PicMergeImages(atalhoAtual.getImgAtalho());
+            PicDefinirCorDeFundo(atalhoAtual.getImgAtalho(), pictureBox1);
+        }
+        picPuxarApps.Image = Image.FromFile(Referencias.caminhoPicAppsShow);
+        PicArredondarBordas(picPuxarApps, 0, 0, 30, 30);
+        PegarApps();
+    }
+    private void Cadastrar()
+    {
+        Form2 telaCadastro = new Form2();
+        telaCadastro.FormClosed += (s, e) => { AtalhoPegarIds(); PegarApps(); };
+        telaCadastro.Owner = this;
+        telaCadastro.Show();
+    }
+
+    // Criar icone e notificacao ------------------------------------------------------------------
     private void CriarNotificacao()
     {
         notifyIcon = new NotifyIcon();
@@ -58,222 +223,16 @@ public partial class Form3 : Form
         notifyIcon.Visible = true;
 
         ContextMenuStrip contextMenu = new ContextMenuStrip();
-        contextMenu.Items.Add("Restaurar", null, RestaurarForm);
-        contextMenu.Items.Add("Sair", null, SairApp);
+        contextMenu.Items.Add("Restaurar", null, RestaurarPlayOS);
+        contextMenu.Items.Add("Sair", null, SairPlayOS);
         notifyIcon.ContextMenuStrip = contextMenu;
     }
-    private void AoCarregar(object sender, EventArgs e)
-    {
-        IMGSwap(imgAtual);
-        DefinirCorDeFundo(imgAtual);
-        PegarApps();
-    }
-    private void DefinirCorDeFundo(Image imgData)
-    {
-        if (imgData == null)
-            return;
-
-        Bitmap bitmap = new Bitmap(imgData);
-        Color corBordaSuperior = bitmap.GetPixel(bitmap.Width / 2, 0);
-        Color corBordaInferior = bitmap.GetPixel(bitmap.Width / 2, bitmap.Height - 1);
-        Color corBordaEsquerda = bitmap.GetPixel(0, bitmap.Height / 2);
-        Color corBordaDireita = bitmap.GetPixel(bitmap.Width - 1, bitmap.Height / 2);
-
-        int r = (corBordaSuperior.R + corBordaInferior.R + corBordaEsquerda.R + corBordaDireita.R) / 4;
-        int g = (corBordaSuperior.G + corBordaInferior.G + corBordaEsquerda.G + corBordaDireita.G) / 4;
-        int b = (corBordaSuperior.B + corBordaInferior.B + corBordaEsquerda.B + corBordaDireita.B) / 4;
-
-        pictureBox1.BackColor = Color.FromArgb(r, g, b);
-    }
-    private void PegarIds()
-    {
-        ids.Clear();
-        try
-        {
-            string connectionString = "Data Source=applicationsShortcuts.db";
-
-            using (var connection = new SqliteConnection(connectionString))
-            {
-                connection.Open();
-
-                string selectCommand = "SELECT Id FROM AtalhosdeAplicativos";
-                using (var command = new SqliteCommand(selectCommand, connection))
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        int id = reader.GetInt32(0);
-
-                        ids.Add(id);
-                    }
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Erro ao listar atalhos: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        if (ids.Count > 0)
-        {
-            if(!ids.Contains(idAtual)){
-                idAtual = (int)ids[0];
-            }
-            ListarAtalho(idAtual);
-        } else {
-            AdicionarCadastro();
-        }
-
-        //ListarAtalho(idAtual);
-    }
-    private void ListarAtalho(int idatual)
-    {
-        Atalhos atalhoContextual = new Atalhos(idatual);
-        atalhoAtual = atalhoContextual;
-        imgAtual = atalhoAtual.getImgAtalho();
-        iconAtual = atalhoAtual.getIconeAtalho();
-
-        AtualizarLabel(atalhoAtual.getNomeAtalho(), nameGame);
-        AtualizarLabel(atalhoAtual.getCaminhoAtalho(), pathGame);
-
-        IMGSwap(imgAtual);
-        DefinirCorDeFundo(imgAtual);
-        ArredondarBordas(iconPic);
-        iconPic.Image = iconAtual;
-    }
-    private void AtualizarLabel(string novoTexto, Label textToEdit)
-    {
-        int antigaLargura = textToEdit.Width;
-        textToEdit.Text = novoTexto;
-
-        int novaLargura = textToEdit.Width;
-        int deslocamento = novaLargura - antigaLargura;
-
-        textToEdit.Left -= deslocamento;
-    }
-    private void IMGSwap(Image imgData)
-    {
-        Bitmap original = new Bitmap(imgData);
-
-        Bitmap vinheta = new Bitmap(@".\Assets\Vinheta.png");
-
-        Bitmap resultado = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-
-        using (Graphics g = Graphics.FromImage(resultado))
-        {
-            float scaleXOr = (float)pictureBox1.Width / original.Width;
-            float scaleYOr = (float)pictureBox1.Height / original.Height;
-            float scaleOr = Math.Min(scaleXOr, scaleYOr);
-
-            int originalWidth = (int)(original.Width * scaleOr);
-            int originalHeight = (int)(original.Height * scaleOr);
-
-            int posXOr = (pictureBox1.Width - originalWidth) / 2;
-            int posYOr = (pictureBox1.Height - originalHeight) / 2;
-
-            g.DrawImage(original,
-                new Rectangle(posXOr, posYOr, originalWidth, originalHeight),
-                new Rectangle(0, 0, original.Width, original.Height),
-                GraphicsUnit.Pixel);
-
-            g.DrawImage(vinheta,
-                new Rectangle(0, 0, pictureBox1.Width, pictureBox1.Height),
-                new Rectangle(0, 0, vinheta.Width, vinheta.Height),
-                GraphicsUnit.Pixel);
-        }
-        pictureBox1.Image = resultado;
-    }
-    private void BtnPicAlternarApps(object sender, EventArgs e)
-    {
-        pnlAppTransition.Start();      
-        heightPnlApps = pnlApps.Size.Height;  
-    }
-    private void PicAlternarApps_Transition(object sender, EventArgs e)
-    {
-        int meioDaTela = (this.Width/2) - picPuxarApps.Width/2;
-        if(appsOcultos)
-        {
-            heightPnlApps += 10;
-            pnlApps.Size = new Size(this.Width, heightPnlApps);
-            picPuxarApps.Location = new Point(meioDaTela, pnlApps.Height);
-            if(pnlApps.Size.Height >= 150)
-            {
-                pnlApps.Size = new Size(this.Width, 150);
-                picPuxarApps.Location = new Point(meioDaTela, pnlApps.Height);
-                appsOcultos = false;
-                pnlAppTransition.Stop();
-            }
-        }
-        else if(appsOcultos == false)
-        {
-            heightPnlApps -= 10;
-            pnlApps.Size = new Size(this.Width, heightPnlApps);
-            picPuxarApps.Location = new Point(meioDaTela, pnlApps.Height);
-            if(pnlApps.Size.Height <= 0)
-            {
-                pnlApps.Size = new Size(this.Width, 0);
-                picPuxarApps.Location = new Point(meioDaTela, pnlApps.Height);
-                appsOcultos = true;
-                pnlAppTransition.Stop();
-            }
-        }
-    }
-    private void BtnAbrirAtalho(object sender, EventArgs e)
-    {
-        try
-        {
-            bool reabrirLaucher = true;
-            string permissao = "runas";
-            
-            if(atalhoAtual.getCaminhoAtalho().Contains("epicgames:") || atalhoAtual.getCaminhoAtalho().Contains("steam:"))
-            {
-                reabrirLaucher = false;
-                permissao = "";
-            }
-            if(atalhoAtual.getCaminhoAtalho().Contains("XboxGames"))
-            {
-                reabrirLaucher = false;
-            }
-
-            string diretorioTrabalho = System.IO.Path.GetDirectoryName(atalhoAtual.getCaminhoAtalho());
-
-            ProcessStartInfo psi = new ProcessStartInfo
-            {
-                FileName = atalhoAtual.getCaminhoAtalho(),
-                WorkingDirectory = diretorioTrabalho,
-                Arguments = atalhoAtual.getParametroAtalho(),
-                Verb = permissao,
-                UseShellExecute = true
-            };
-
-            Process jogoAberto = Process.Start(psi);
-
-            if (jogoAberto != null && reabrirLaucher)
-            {
-                jogoAberto.EnableRaisingEvents = true;
-                jogoAberto.Exited += (s, args) =>
-                {
-                    Invoke(new Action(() =>
-                    {
-                        this.Show();
-                        this.WindowState = FormWindowState.Maximized;
-                    }));
-                };
-
-                MandarPraBandeja();
-            }
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Erro ao abrir o atalho: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-    }
-    private void RestaurarForm(object sender, EventArgs e)
+    private void RestaurarPlayOS(object sender, EventArgs e)
     {
         this.Show();
         this.WindowState = FormWindowState.Maximized;
     }
-    private void SairApp(object sender, EventArgs e)
+    private void SairPlayOS(object sender, EventArgs e)
     {
         Application.Exit();
     }
@@ -282,13 +241,142 @@ public partial class Form3 : Form
         this.Hide();
         notifyIcon.ShowBalloonTip(1000, "Aplicativo Minimizado", "Clique para restaurar", ToolTipIcon.Info);
     }
+
+    // Atalho atual -------------------------------------------------------------------------------
+    private void AtalhoPegarIds()
+    {
+        ids.Clear();
+        try
+        {
+            ids = Atalhos.ConsultarIDs();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erro ao listar ids: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        if (ids.Count > 0)
+        {
+            if (!ids.Contains(idAtual)) { idAtual = (int)ids[0]; }
+            AtalhoListar(idAtual);
+        } else {
+            Cadastrar();
+        }
+    }
+    private void AtalhoListar(int idatual)
+    {
+        atalhoAtual = new Atalhos(idatual);
+
+        LblPosicionarCorretamente(atalhoAtual.getNomeAtalho(), nameGame);
+        LblPosicionarCorretamente(atalhoAtual.getCaminhoAtalho(), pathGame);
+
+        PicMergeImages(atalhoAtual.getImgAtalho());
+        PicDefinirCorDeFundo(atalhoAtual.getImgAtalho(), pictureBox1);
+        PicArredondarBordas(iconPic, 30, 30, 30, 30);
+        iconPic.Image = atalhoAtual.getIconeAtalho();
+    }
+    private string GetEpicGames()
+    {
+        string registryKey = @"HKEY_CLASSES_ROOT\com.epicgames.launcher\shell\open\command";
+
+        string command = (string)Registry.GetValue(registryKey, null, string.Empty);
+
+        if (!string.IsNullOrEmpty(command))
+        {
+            string[] parts = command.Split(" %");
+
+            string commandToRun = parts[0].Trim();
+
+            return commandToRun;
+        }
+
+        return null;
+    }
+    private void AbrirEpicGames(string caminho,string diretorioTrabalho,string argumentacao,string permissao){
+        this.TopMost = true;
+        Process.Start(caminho);
+
+        System.Timers.Timer temporizadorEpicAberta = new System.Timers.Timer(7000);
+        temporizadorEpicAberta.Elapsed += (s, e) =>
+        {
+            var processosAtuais = Process.GetProcesses();
+            Process epic = null;
+            foreach (var processo in processosAtuais)
+            {
+                if (processo.ProcessName.ToLower().Contains("epicgameslauncher"))
+                {
+                    epic = processo;
+                    break;
+                }
+            }
+            if (epic != null)
+            {
+                temporizadorEpicAberta.Enabled = false;
+                this.TopMost = false;
+                epic.CloseMainWindow();
+                AbrirAtalho(caminho, diretorioTrabalho, argumentacao, permissao);
+            }
+            else
+            {
+                MessageBox.Show("Epic Games Launcher não foi encontrado.");
+            }
+        };
+        
+        temporizadorEpicAberta.Enabled = true;
+
+    }
+    private void AbrirAtalho (string caminho,string diretorioTrabalho,string argumentacao,string permissao){
+        try{
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = caminho,
+                WorkingDirectory = diretorioTrabalho,
+                Arguments = argumentacao,
+                Verb = permissao,
+                UseShellExecute = true
+            };
+            jogoAberto = Process.Start(psi);
+
+            IniciarMonitoramento();
+
+            MonitoramentoDeProcesos();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erro ao abrir o atalho: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+    private void FecharAtalho()
+    {
+        if (jogoAberto != null && !jogoAberto.HasExited)
+        {
+            jogoAberto.CloseMainWindow();
+            if (!jogoAberto.HasExited)
+            {
+                jogoAberto.Kill();
+            }
+        }
+    }
+    private void AoFecharAtalho(object sender, EventArgs e)
+    {
+        var processo = sender as Process;
+        if (processo != null)
+        {
+            TimeSpan tempoDecorrido = DateTime.Now - processo.StartTime;
+            MessageBox.Show($"O jogo '{processo.ProcessName}' foi fechado. Tempo de execução: {tempoDecorrido.TotalSeconds} segundos.");
+        }
+
+        jogoAberto = null;
+        this.Show();
+        this.WindowState = FormWindowState.Maximized;
+    }
     private bool GameNext()
     {
         int indiceAtual = ids.IndexOf(idAtual);
         if (indiceAtual < ids.Count - 1)
         {
             idAtual = (int)ids[indiceAtual + 1];
-            ListarAtalho(idAtual);
+            AtalhoListar(idAtual);
             return true;
         }
 
@@ -300,118 +388,156 @@ public partial class Form3 : Form
         if (indiceAtual > 0)
         {
             idAtual = (int)ids[indiceAtual - 1];
-            ListarAtalho(idAtual);
+            AtalhoListar(idAtual);
             return true;
         }
 
         return false;
     }
-    private void SetUAC(int enable)
-    {
-        if (!IsAdministrator())
-        {
-            MessageBox.Show("Execute o programa como administrador para alterar o UAC.", "Permissão Necessária", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
-        }
-
+    private void BtnAbrirAtalho(object sender, EventArgs e) {
         try
         {
-            const string keyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System";
-            using (RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath, true))
+            string caminho = atalhoAtual.getCaminhoAtalho();
+            string permissao = "runas";
+            string argumentacao = atalhoAtual.getParametroAtalho();
+            string diretorioTrabalho = System.IO.Path.GetDirectoryName(caminho);
+            if(caminho.Contains("steam:"))
             {
-                if (key != null)
-                {
-                    key.SetValue("EnableLUA", enable, RegistryValueKind.DWord);
-                    MessageBox.Show($"UAC {(enable == 1 ? "ativado" : "desativado")}. Reinicie o computador para aplicar as mudanças.", "Alteração Bem-sucedida", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    MessageBox.Show("Não foi possível acessar o registro.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                permissao = "";
             }
+            if(caminho.Contains("epicgames"))
+            {
+                argumentacao = caminho;
+                caminho = GetEpicGames();
+                diretorioTrabalho = System.IO.Path.GetDirectoryName(caminho);
+                AbrirEpicGames(caminho, diretorioTrabalho, argumentacao, permissao);
+            }else{
+                AbrirAtalho(caminho, diretorioTrabalho, argumentacao, permissao);
+            }
+            PicGIFAbrindoJogo();
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Erro ao alterar o UAC: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show($"Erro no botao de abrir atalho: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
-    private bool IsAdministrator()
-    {
-        using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
-        {
-            WindowsPrincipal principal = new WindowsPrincipal(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
-        }
-    }
-    private void AdicionarCadastro()
-    {
-        Form2 telaCadastro = new Form2();
-        telaCadastro.FormClosed += (s, e) => { PegarIds(); PegarApps(); };
-        telaCadastro.Owner = this;
-        telaCadastro.ShowDialog();
-    }
-    private void BtnEditar(object sender, EventArgs e)
+    private void BtnEditarAtalho(object sender, EventArgs e)
     {
         Form2 telaCadastro = new Form2(idAtual, 0);
-        telaCadastro.FormClosed += (s, e) => PegarIds();
+        telaCadastro.FormClosed += (s, e) => AtalhoPegarIds();
         telaCadastro.Owner = this;
         telaCadastro.ShowDialog();
     }
-    private void BtnDeletar(object sender, EventArgs e)
+    private void BtnDeletarAtalho(object sender, EventArgs e)
     {
-        Atalhos atalhoAtual = new Atalhos();
-        atalhoAtual.Deletar(idAtual);
+        Atalhos.Deletar(idAtual);
 
         if (!GameNext())
         {
             GamePrev();
         }
         
-        PegarIds();
+        AtalhoPegarIds();
     }
-    private void AddApp(){
-        for(int i = 0; i < appsContext.Count; i++){
-            pnlApps.Controls.Add(CriacaoApp(appsContext[i], OrganizacaoApps(appsContext.Count, i+1)));
-        }
 
-        appsContext.Clear();
+    // Monitoramento de processos -----------------------------------------------------------------
+    public void IniciarMonitoramento()
+    {
+        timerMonitorarProcessos = new System.Timers.Timer(1000);
+        timerMonitorarProcessos.Elapsed += MonitorarNovosProcessos;
+        timerMonitorarProcessos.AutoReset = true;
+        timerMonitorarProcessos.Enabled = true;
     }
+    private void MonitoramentoDeProcesos(){
+        timerProcessoEstabilizar = new System.Timers.Timer(60000); //Tempo maximo de monitoramento de processos
+        timerProcessoEstabilizar.Elapsed += VerificacaoProcessoEstabilizado;
+        timerProcessoEstabilizar.AutoReset = false;
+        timerProcessoEstabilizar.Enabled = true;
+    }
+    private void MonitorarNovosProcessos(object sender, ElapsedEventArgs e)
+    {
+        var processosAtuais = Process.GetProcesses();
+        foreach (var processo in processosAtuais)
+        {
+            try
+            {
+                if (IgnorarProcesso(processo) || processosIniciados.Contains(processo.Id))
+                    continue;
+
+                processosIniciados.Add(processo.Id);
+
+                if (jogoAberto != null)
+                {
+                    if (processo.MainWindowHandle != IntPtr.Zero)
+                    {
+                        jogoAberto.Exited -= AoFecharAtalho;
+                        jogoAberto = processo;
+                        jogoAberto.EnableRaisingEvents = true;
+                        jogoAberto.Exited += AoFecharAtalho;
+                        if(IsFullscreenWithoutBorders(processo)){
+                            MandarPraBandeja();
+                            PicGIFRemover();
+                        }
+                        //MessageBox.Show($"Novo processo monitorado: {jogoAberto.ProcessName} (ID: {jogoAberto.Id})");
+                    }
+                }
+                /*else
+                {
+                    MessageBox.Show($"Processo inicial detectado: {jogoAberto.ProcessName} (ID: {jogoAberto.Id})");
+                }*/
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao acessar processo {processo.Id}: {ex.Message}");
+            }
+        }
+    }
+    private void VerificacaoProcessoEstabilizado(object sender, ElapsedEventArgs e){
+        jogoAberto.Exited -= AoFecharAtalho;
+        jogoAberto.Exited += AoFecharAtalho;
+        
+        jogoAberto.EnableRaisingEvents = true;
+        
+        timerMonitorarProcessos.Enabled = false; 
+        timerProcessoEstabilizar.Enabled = false;
+    }
+    private bool IgnorarProcesso(Process processo)
+    {
+        try
+        {
+            string[] processosIgnorados = { "chrome", "firefox", "opera", "spotify", "edge", "steam", "textinput", "code", "playos", "xbox", "dwm", "taskmgr", "protected", "playso", "discord", "settings", "explorer", "svchost", "dllhost", "taskhost", "service", "application", "explorer" };
+
+            if (processosIgnorados.Any(nome => processo.ProcessName.ToLower().Contains(nome)))
+                return true;
+
+            return processo.MainWindowHandle == IntPtr.Zero;
+        }
+        catch
+        {
+            return true;
+        }
+    }
+
+    // Aplicativos --------------------------------------------------------------------------------
     private void PegarApps()
     {
         pnlApps.Controls.Clear();
-        ArrayList idsApps = new ArrayList();
-        try
-        {
-            string connectionString = "Data Source=applicationsShortcuts.db";
-
-            using (var connection = new SqliteConnection(connectionString))
-            {
-                connection.Open();
-
-                string selectCommand = "SELECT Id FROM AplicativosExtras";
-                using (var command = new SqliteCommand(selectCommand, connection))
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        int id = reader.GetInt32(0);
-
-                        idsApps.Add(id);
-                    }
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Erro ao listar atalhos: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
+        ArrayList idsApps = Aplicativos.ConsultarIDs();
+        List<Aplicativos> appsContext = new List<Aplicativos>();
 
         foreach(int id in idsApps){
             Aplicativos appAtual = new Aplicativos(id);
             appsContext.Add(appAtual);
         }
 
-        AddApp();
+        PnlPnlAddApp(appsContext);
+    }
+    private void PnlPnlAddApp(List<Aplicativos> appsContext){
+        for(int i = 0; i < appsContext.Count; i++){
+            pnlApps.Controls.Add(CriacaoApp(appsContext[i], OrganizacaoApps(appsContext.Count, i+1)));
+        }
+
+        appsContext.Clear();
     }
     private Point OrganizacaoApps(int quantidadeDeApps, int posicaoDoApp)
     {
@@ -441,7 +567,7 @@ public partial class Form3 : Form
             Size = new Size(75, 75),
             SizeMode = PictureBoxSizeMode.Zoom
         };
-        ArredondarBordas(picAppIcon);
+        PicArredondarBordas(picAppIcon, 30, 30, 30, 30);
         //
         Label lblAppNome = new Label{
             Font = new Font("Arial", 9F, FontStyle.Bold, GraphicsUnit.Point, 0),
@@ -483,7 +609,7 @@ public partial class Form3 : Form
             }
             if (e.Button == MouseButtons.Left)
             {
-                BtnAbrirExtraApp(s, e);
+                BtnAbrirAplicativos(s, e);
             }
         };
         lblAppNome.MouseClick += (s, e) =>
@@ -494,60 +620,11 @@ public partial class Form3 : Form
             }
             if (e.Button == MouseButtons.Left)
             {
-                BtnAbrirExtraApp(s, e);
+                BtnAbrirAplicativos(s, e);
             }
         };
 
         return pnlBackground;
-    }
-    private void ArredondarBordas(PictureBox pictureBox)
-    {
-        int cornerRadius = 30;
-        using (GraphicsPath gp = new GraphicsPath())
-        {
-            gp.AddArc(0, 0, cornerRadius, cornerRadius, 180, 90); // Canto superior esquerdo
-            gp.AddArc(pictureBox.Width - cornerRadius, 0, cornerRadius, cornerRadius, 270, 90); // Canto superior direito
-            gp.AddArc(pictureBox.Width - cornerRadius, pictureBox.Height - cornerRadius, cornerRadius, cornerRadius, 0, 90); // Inferior direito
-            gp.AddArc(0, pictureBox.Height - cornerRadius, cornerRadius, cornerRadius, 90, 90); // Inferior esquerdo
-            gp.CloseFigure();
-
-            pictureBox.Region = new Region(gp);
-        }
-    }
-    private void BtnAbrirExtraApp(object sender, EventArgs e){
-        PictureBox pic = sender as PictureBox;
-        Label lbl = sender as Label;
-        int id = 0;
-        if (pic != null && pic.Name.Contains(">"))
-        {
-            id = int.Parse(pic.Name.Split(">")[1]);
-        } else
-        if (lbl != null && lbl.Name.Contains(">"))
-        {
-            id = int.Parse(lbl.Name.Split(">")[1]);
-        }
-
-        try
-        {
-            Aplicativos appPraAbrir = new Aplicativos(id);
-
-            string url = appPraAbrir.getCaminhoAplicativo();
-
-            string diretorioTrabalho = System.IO.Path.GetDirectoryName(url);
-
-            ProcessStartInfo psi = new ProcessStartInfo
-            {
-                FileName = url,
-                WorkingDirectory = diretorioTrabalho,
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Erro ao abrir o atalho: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
     }
     private void CriarPopup(int id)
     {
@@ -603,8 +680,8 @@ public partial class Form3 : Form
         popup.Controls.Add(lblEditarApp);
         popup.Controls.Add(lblApagarApp);
 
-        lblAbrirApp.Click += BtnAbrirExtraApp;
-        lblEditarApp.Click += BtnEditarApp;
+        lblAbrirApp.Click += BtnAbrirAplicativos;
+        lblEditarApp.Click += BtnEditarAplicativos;
         lblApagarApp.Click += (s, e) => pnlApps.Controls.Clear();
 
         popup.Location = Cursor.Position;
@@ -622,7 +699,79 @@ public partial class Form3 : Form
 
         popup.Show();
     }
-    private void BtnEditarApp(object sender, EventArgs e)
+    private void TransicaoAppsOcultos(object sender, EventArgs e)
+    {
+        int meioDaTela = (this.Width/2) - picPuxarApps.Width/2;
+        if(appsOcultos)
+        {
+            heightPnlApps += 10;
+            pnlApps.Size = new Size(this.Width, heightPnlApps);
+            picPuxarApps.Location = new Point(meioDaTela, pnlApps.Height);
+            if(pnlApps.Size.Height >= 150)
+            {
+                picPuxarApps.Image = Image.FromFile(Referencias.caminhoPicAppsHide);
+                pnlApps.Size = new Size(this.Width, 150);
+                picPuxarApps.Location = new Point(meioDaTela, pnlApps.Height);
+                appsOcultos = false;
+                pnlAppTransition.Stop();
+            }
+        }
+        else if(appsOcultos == false)
+        {
+            heightPnlApps -= 10;
+            pnlApps.Size = new Size(this.Width, heightPnlApps);
+            picPuxarApps.Location = new Point(meioDaTela, pnlApps.Height);
+            if(pnlApps.Size.Height <= 0)
+            {
+                picPuxarApps.Image = Image.FromFile(Referencias.caminhoPicAppsShow);
+                pnlApps.Size = new Size(this.Width, 0);
+                picPuxarApps.Location = new Point(meioDaTela, pnlApps.Height);
+                appsOcultos = true;
+                pnlAppTransition.Stop();
+            }
+        }
+    }
+    private void BtnAlternarAppsOcultos(object sender, EventArgs e)
+    {
+        pnlAppTransition.Start();      
+        heightPnlApps = pnlApps.Size.Height;  
+    }
+    private void BtnAbrirAplicativos(object sender, EventArgs e){
+        PictureBox pic = sender as PictureBox;
+        Label lbl = sender as Label;
+        int id = 0;
+        if (pic != null && pic.Name.Contains(">"))
+        {
+            id = int.Parse(pic.Name.Split(">")[1]);
+        } else
+        if (lbl != null && lbl.Name.Contains(">"))
+        {
+            id = int.Parse(lbl.Name.Split(">")[1]);
+        }
+
+        try
+        {
+            Aplicativos appPraAbrir = new Aplicativos(id);
+
+            string url = appPraAbrir.getCaminhoAplicativo();
+
+            string diretorioTrabalho = System.IO.Path.GetDirectoryName(url);
+
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = url,
+                WorkingDirectory = diretorioTrabalho,
+                UseShellExecute = true
+            };
+
+            Process.Start(psi);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erro ao abrir o atalho: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+    private void BtnEditarAplicativos(object sender, EventArgs e)
     {
         Label lbl = sender as Label;
         int id = int.Parse(lbl.Name.Split(">")[1]);
@@ -631,5 +780,211 @@ public partial class Form3 : Form
         telaCadastro.FormClosed += (s, e) => PegarApps();
         telaCadastro.Owner = this;
         telaCadastro.Show();
+    }
+
+    // Tratamento pictureBoxes --------------------------------------------------------------------
+    private void PicDefinirCorDeFundo(Image imgData, PictureBox pic)
+    {
+        if (imgData == null)
+            return;
+
+        Bitmap bitmap = new Bitmap(imgData);
+        Color corBordaSuperior = bitmap.GetPixel(bitmap.Width / 2, 0);
+        Color corBordaInferior = bitmap.GetPixel(bitmap.Width / 2, bitmap.Height - 1);
+        Color corBordaEsquerda = bitmap.GetPixel(0, bitmap.Height / 2);
+        Color corBordaDireita = bitmap.GetPixel(bitmap.Width - 1, bitmap.Height / 2);
+
+        int a = (corBordaSuperior.A + corBordaInferior.A + corBordaEsquerda.A + corBordaDireita.A) / 4;
+        int r = (corBordaSuperior.R + corBordaInferior.R + corBordaEsquerda.R + corBordaDireita.R) / 4;
+        int g = (corBordaSuperior.G + corBordaInferior.G + corBordaEsquerda.G + corBordaDireita.G) / 4;
+        int b = (corBordaSuperior.B + corBordaInferior.B + corBordaEsquerda.B + corBordaDireita.B) / 4;
+
+        pic.BackColor = Color.FromArgb(a, r, g, b);
+    }
+    private void PicMergeImages(Image imgData)
+    {
+        Bitmap original = new Bitmap(imgData);
+
+        Bitmap vinheta = new Bitmap(Referencias.caminhoVinheta);
+
+        Bitmap resultado = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+
+        using (Graphics g = Graphics.FromImage(resultado))
+        {
+            float scaleXOr = (float)pictureBox1.Width / original.Width;
+            float scaleYOr = (float)pictureBox1.Height / original.Height;
+            float scaleOr = Math.Min(scaleXOr, scaleYOr);
+
+            int originalWidth = (int)(original.Width * scaleOr);
+            int originalHeight = (int)(original.Height * scaleOr);
+
+            int posXOr = (pictureBox1.Width - originalWidth) / 2;
+            int posYOr = (pictureBox1.Height - originalHeight) / 2;
+
+            g.DrawImage(original,
+                new Rectangle(posXOr, posYOr, originalWidth, originalHeight),
+                new Rectangle(0, 0, original.Width, original.Height),
+                GraphicsUnit.Pixel);
+
+            g.DrawImage(vinheta,
+                new Rectangle(0, 0, pictureBox1.Width, pictureBox1.Height),
+                new Rectangle(0, 0, vinheta.Width, vinheta.Height),
+                GraphicsUnit.Pixel);
+        }
+        pictureBox1.Image = resultado;
+    }
+    private void PicGIFAbrindoJogo(){
+        Image imgGIF = Image.FromFile(Referencias.caminhoGifCarregamento);
+        int widthPic = 400;
+        int heightPic = 200;
+        int rightPic = this.Width/2 - widthPic/2;
+        int topPic = this.Height/2 - heightPic/2;
+        PictureBox picGIFCarregamento = new PictureBox
+        {
+            Image = imgGIF,
+            Anchor = AnchorStyles.Top,
+            Location = new Point(rightPic, topPic),
+            Name = "picGIFCarregamento",
+            Size = new Size(widthPic, heightPic),
+            SizeMode = PictureBoxSizeMode.Zoom,
+            TabStop = false,
+            Parent = pictureBox1
+        };
+
+        pictureBox1.Controls.Add(picGIFCarregamento);
+
+        PicDefinirCorDeFundo(imgGIF, picGIFCarregamento);
+        PicArredondarBordas(picGIFCarregamento, 30, 30, 30, 30);
+    }
+    private void PicGIFRemover()
+    {
+        Control[] controlesEncontrados = pictureBox1.Controls.Find("picGIFCarregamento", true);
+        if (controlesEncontrados[0] != null && pictureBox1.Controls.Contains(controlesEncontrados[0]))
+        {
+            pictureBox1.Controls.Remove(controlesEncontrados[0]);
+            
+            controlesEncontrados[0].Dispose();
+        }
+    }
+    private void PicArredondarBordas(PictureBox pictureBox, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
+    {
+        using (GraphicsPath gp = new GraphicsPath())
+        {
+            // Canto superior esquerdo
+            if (topLeftRadius > 0)
+                gp.AddArc(0, 0, topLeftRadius * 2, topLeftRadius * 2, 180, 90);
+            else
+                gp.AddLine(0, 0, 0, 0); // Pontudo
+
+            // Canto superior direito
+            if (topRightRadius > 0)
+                gp.AddArc(pictureBox.Width - topRightRadius * 2, 0, topRightRadius * 2, topRightRadius * 2, 270, 90);
+            else
+                gp.AddLine(pictureBox.Width, 0, pictureBox.Width, 0); // Pontudo
+
+            // Canto inferior direito
+            if (bottomRightRadius > 0)
+                gp.AddArc(pictureBox.Width - bottomRightRadius * 2, pictureBox.Height - bottomRightRadius * 2, bottomRightRadius * 2, bottomRightRadius * 2, 0, 90);
+            else
+                gp.AddLine(pictureBox.Width, pictureBox.Height, pictureBox.Width, pictureBox.Height); // Pontudo
+
+            // Canto inferior esquerdo
+            if (bottomLeftRadius > 0)
+                gp.AddArc(0, pictureBox.Height - bottomLeftRadius * 2, bottomLeftRadius * 2, bottomLeftRadius * 2, 90, 90);
+            else
+                gp.AddLine(0, pictureBox.Height, 0, pictureBox.Height); // Pontudo
+
+            gp.CloseFigure();
+
+            pictureBox.Region = new Region(gp);
+        }
+    }
+
+    // Tratamento Labels ---------------------------------------------------------------------------
+    private void LblPosicionarCorretamente(string novoTexto, Label textToEdit)
+    {
+        int antigaLargura = textToEdit.Width;
+        textToEdit.Text = novoTexto;
+
+        int novaLargura = textToEdit.Width;
+        int deslocamento = novaLargura - antigaLargura;
+
+        textToEdit.Left -= deslocamento;
+    }
+
+    // Data e hora --------------------------------------------------------------------------------
+    private void CriarRelogio()
+    {
+        horario = DateTime.Now;
+        int segundosParaProximoMinuto = 60 - horario.Second;
+        LblPosicionarCorretamente(horario.ToString("HH:mm") + " hr", lblClockAtalho);
+        LblPosicionarCorretamente(horario.ToString("D"), lblDataAtalhos);
+
+        temporizadorDoRelogio = new System.Timers.Timer(segundosParaProximoMinuto*1000);
+        temporizadorDoRelogio.Elapsed += AtualizarHorario;
+        temporizadorDoRelogio.AutoReset = true;
+        temporizadorDoRelogio.Enabled = true;
+    }
+    private void AtualizarHorario(object sender, ElapsedEventArgs e)
+    {
+        DateTime horarioAtual = DateTime.Now;
+        
+        if(temporizadorDoRelogio.Interval != 60000){
+            AtualizarTemporizador(horarioAtual);
+        }
+
+        horario = horarioAtual;
+
+        LblPosicionarCorretamente(horario.ToString("HH:mm") + " hr", lblClockAtalho);
+    }
+    private void AtualizarTemporizador(DateTime horarioAtual){
+        if(!horario.ToString("HH:mm").Equals(horarioAtual.ToString("HH:mm")))
+        {
+            temporizadorDoRelogio.Enabled = false;
+            
+            temporizadorDoRelogio = new System.Timers.Timer(60000);
+            temporizadorDoRelogio.Elapsed += AtualizarHorario;
+            temporizadorDoRelogio.AutoReset = true;
+            temporizadorDoRelogio.Enabled = true;
+        }
+    }
+
+    // Configuracoes ------------------------------------------------------------------------------
+    private void SetUAC(int enable)
+    {
+        if (!IsAdministrator())
+        {
+            MessageBox.Show("Execute o programa como administrador para alterar o UAC.", "Permissão Necessária", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        try
+        {
+            const string keyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System";
+            using (RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath, true))
+            {
+                if (key != null)
+                {
+                    key.SetValue("EnableLUA", enable, RegistryValueKind.DWord);
+                    MessageBox.Show($"UAC {(enable == 1 ? "ativado" : "desativado")}. Reinicie o computador para aplicar as mudanças.", "Alteração Bem-sucedida", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Não foi possível acessar o registro.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erro ao alterar o UAC: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+    private bool IsAdministrator()
+    {
+        using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
+        {
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
     }
 }

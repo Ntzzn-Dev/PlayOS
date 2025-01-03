@@ -35,4 +35,13 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Assets\applicationsShortcuts.db" CopyToOutputDirectory="Always" />
+    <Content Include="Assets\Morgan.jpg" CopyToOutputDirectory="Always" />
+    <Content Include="Assets\Vinheta.png" CopyToOutputDirectory="Always" />
+    <Content Include="Assets\Carregando.gif" CopyToOutputDirectory="Always" />
+    <Content Include="Assets\PicAppsShow.png" CopyToOutputDirectory="Always" />
+    <Content Include="Assets\PicAppsHide.png" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
 </Project>

@@ -17,9 +17,10 @@ public partial class Form4 : Form
 
         lblTelaColaWeb.Text = acaoAtual;
 
-        picImagemDaWeb.Image = Image.FromFile(Form2.caminhoImgPadrao);
+        picImagemDaWeb.Image = Image.FromFile(Referencias.caminhoImgPadrao);
 
         txtbxURLWeb.KeyDown += (s, e) => {if(e.KeyCode == Keys.Enter){BaixarImgs(txtbxURLWeb.Text);}};
+        txtbxURLWeb.TextChanged += (s, e) => BaixarImgs(txtbxURLWeb.Text);
     }
     public Form4(string acaoAtual)
     {
@@ -29,7 +30,7 @@ public partial class Form4 : Form
 
         lblTelaColaWeb.Text = acaoAtual;
 
-        picImagemDaWeb.Image = Image.FromFile(Form2.caminhoImgPadrao);
+        picImagemDaWeb.Image = Image.FromFile(Referencias.caminhoImgPadrao);
     }
 
     private void DefinirGatilhos()
@@ -48,7 +49,7 @@ public partial class Form4 : Form
             {
                 if (imgCarregada == 1)
                 {
-                    RetornarURL();  ///Testar
+                    RetornarURL();  //Testar
                     imgCarregada = 0;
                 }
             }
@@ -91,16 +92,17 @@ public partial class Form4 : Form
     {
         try
         {
+            string formato = await DetectarFormatoAsync(pathToImg);
             bool eIcone = lblTelaColaWeb.Text.Contains("icone");
             byte[] bytesDaImg = new byte[0];
-            string formato = await DetectarFormatoAsync(pathToImg);
             
             if (string.IsNullOrEmpty(pathToImg))
             {
-                picImagemDaWeb.Image = Image.FromFile(Form2.caminhoImgPadrao);
+                picImagemDaWeb.Image = Image.FromFile(Referencias.caminhoImgPadrao);
                 return;
             }
-            if (File.Exists(pathToImg))
+
+            if (formato == "LOCAL")
             {
                 Image imgCarregada = Image.FromFile(pathToImg);
                 if (imgCarregada.Width != imgCarregada.Height && eIcone)
@@ -113,7 +115,7 @@ public partial class Form4 : Form
                     picImagemDaWeb.Image = imgCarregada;
                 }
             }
-            else if (pathToImg.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
+            else if (formato == "BASE64")
             {
                 var base64Data = pathToImg.Split(',')[1];
                 bytesDaImg = Convert.FromBase64String(base64Data);
@@ -131,50 +133,8 @@ public partial class Form4 : Form
                         picImagemDaWeb.Image = imgCarregada;
                     }
                 }
-            } 
-            else if (formato == "WEBP")
-            {
-                Image imagem = await CarregarImagemWebpAsync(pathToImg);
-
-                if (imagem != null){
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        Bitmap bitmap = new Bitmap(imagem);
-                        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                        if (imagem.Width != imagem.Height && eIcone)
-                        {
-                            txtbxURLWeb.Text = "";
-                            MessageBox.Show("a imagem deve ser quadrada");
-                        }
-                        else
-                        {
-                            picImagemDaWeb.Image = bitmap;
-                        }
-                    }
-                }    
             }
-            else if (formato == "ICO")
-            {
-                Image imagem = await BaixarEConverterIcoAsync(pathToImg);
-
-                if (imagem != null){
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        Bitmap bitmap = new Bitmap(imagem);
-                        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                        if (imagem.Width != imagem.Height && eIcone)
-                        {
-                            txtbxURLWeb.Text = "";
-                            MessageBox.Show("a imagem deve ser quadrada");
-                        }
-                        else
-                        {
-                            picImagemDaWeb.Image = bitmap;
-                        };
-                    }
-                }                
-            }
-            else
+            else if (formato == "OUTRO")
             {
                 using (HttpClient client = new HttpClient())
                 {
@@ -195,6 +155,39 @@ public partial class Form4 : Form
                     }
                 }
             }
+            else if (formato == "WEBP")
+            {
+                Image imagem = await CarregarImagemWebpAsync(pathToImg);
+
+                if (imagem != null){
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        Bitmap bitmap = new Bitmap(imagem);
+                        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+
+                        bytesDaImg = ms.ToArray();
+
+                        picImagemDaWeb.Image = bitmap;
+                    }
+                }    
+            }
+            else if (formato == "ICO")
+            {
+                Image imagem = await BaixarEConverterIcoAsync(pathToImg);
+
+                if (imagem != null){
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        Bitmap bitmap = new Bitmap(imagem);
+                        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+
+                        bytesDaImg = ms.ToArray();
+
+                        picImagemDaWeb.Image = bitmap;
+                    }
+                }                
+            } else {return;}
+            
             imgCarregada = 1;
         }
         catch (Exception ex)
@@ -204,23 +197,28 @@ public partial class Form4 : Form
     }
     private async Task<string> DetectarFormatoAsync(string url)
     {
-        using (HttpClient client = new HttpClient())
-        {
-            byte[] bytes = await client.GetByteArrayAsync(url);
-
-            if (bytes.Length >= 12)
+        if(url.StartsWith("data:", StringComparison.OrdinalIgnoreCase)){ return "BASE64"; } else 
+        if (File.Exists(url)) { return "LOCAL";} else 
+        if (Uri.TryCreate(url, UriKind.Absolute, out Uri? uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
             {
-                string header = BitConverter.ToString(bytes.Take(12).ToArray()).Replace("-", "");
+            using (HttpClient client = new HttpClient())
+            {
+                byte[] bytes = await client.GetByteArrayAsync(url);
 
-                if (header.StartsWith("52494646") && header.Contains("57454250")) // WEBP
-                    return "WEBP";
+                if (bytes.Length >= 12)
+                {
+                    string header = BitConverter.ToString(bytes.Take(12).ToArray()).Replace("-", "");
 
-                if (header.StartsWith("00000100") || header.StartsWith("00000200")) // ICO
-                    return "ICO";
+                    if (header.StartsWith("52494646") && header.Contains("57454250")) // WEBP
+                        return "WEBP";
+
+                    if (header.StartsWith("00000100") || header.StartsWith("00000200")) // ICO
+                        return "ICO";
+                }
+                return "OUTRO";
             }
-
-            return "OUTRO";
         }
+        return "NENHUM";
     }
     private async Task<Image> CarregarImagemWebpAsync(string url)
     {

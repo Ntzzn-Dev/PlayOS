@@ -143,7 +143,6 @@ H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\runtimes\win\lib\net8.0\Syste
 H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Threading.AccessControl.dll
 H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Windows.Extensions.dll
 H:\Projects\CSharp\PlaySO\obj\Debug\net8.0-windows\PlaySO.csproj.AssemblyReference.cache
-H:\Projects\CSharp\PlaySO\obj\Debug\net8.0-windows\PlaySO.Form1.resources
 H:\Projects\CSharp\PlaySO\obj\Debug\net8.0-windows\PlaySO.Form2.resources
 H:\Projects\CSharp\PlaySO\obj\Debug\net8.0-windows\PlaySO.Form3.resources
 H:\Projects\CSharp\PlaySO\obj\Debug\net8.0-windows\PlaySO.Properties.Resources.resources
@@ -159,9 +158,14 @@ H:\Projects\CSharp\PlaySO\obj\Debug\net8.0-windows\PlaySO.pdb
 H:\Projects\CSharp\PlaySO\obj\Debug\net8.0-windows\PlaySO.genruntimeconfig.cache
 H:\Projects\CSharp\PlaySO\obj\Debug\net8.0-windows\ref\PlaySO.dll
 H:\Projects\CSharp\PlaySO\obj\Debug\net8.0-windows\PlaySO.Form4.resources
-H:\Projects\CSharp\PlaySO\obj\Debug\net8.0-windows\PlaySO.Form5.resources
 H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\SkiaSharp.dll
 H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\runtimes\osx\native\libSkiaSharp.dylib
 H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\runtimes\win-arm64\native\libSkiaSharp.dll
 H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\runtimes\win-x64\native\libSkiaSharp.dll
 H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\runtimes\win-x86\native\libSkiaSharp.dll
+H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\Assets\applicationsShortcuts.db
+H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\Assets\Morgan.jpg
+H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\Assets\Vinheta.png
+H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\Assets\Carregando.gif
+H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\Assets\PicAppsShow.png
+H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\Assets\PicAppsHide.png

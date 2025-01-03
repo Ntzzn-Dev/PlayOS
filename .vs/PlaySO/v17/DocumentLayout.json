@@ -3,28 +3,16 @@
   "WorkspaceRootPath": "H:\\Projects\\CSharp\\PlaySO\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|h:\\projects\\csharp\\playso\\form4.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:form4.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|H:\\Projects\\CSharp\\PlaySO\\form4.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:form4.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|H:\\Projects\\CSharp\\PlaySO\\form3.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|h:\\projects\\csharp\\playso\\form3.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:form3.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|h:\\projects\\csharp\\playso\\objectsso.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:objectsso.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|H:\\Projects\\CSharp\\PlaySO\\form2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:form2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|h:\\projects\\csharp\\playso\\form3.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:form3.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|h:\\projects\\csharp\\playso\\form3.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:form3.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|h:\\projects\\csharp\\playso\\form2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -35,24 +23,28 @@
       "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:form2.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|H:\\Projects\\CSharp\\PlaySO\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|h:\\projects\\csharp\\playso\\playso.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:playso.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|h:\\projects\\csharp\\playso\\form3.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:form3.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|h:\\projects\\csharp\\playso\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|h:\\projects\\csharp\\playso\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|h:\\projects\\csharp\\playso\\form4.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:form4.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|h:\\projects\\csharp\\playso\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|H:\\Projects\\CSharp\\PlaySO\\form4.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:form4.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|h:\\projects\\csharp\\playso\\form3.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:form3.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|h:\\projects\\csharp\\playso\\playso.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{0577956C-F67D-4F8D-B67A-AD87F7C3D1C5}|PlaySO.csproj|solutionrelative:playso.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -62,75 +54,61 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 10,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ObjectsSO.cs",
+              "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\ObjectsSO.cs",
+              "RelativeDocumentMoniker": "ObjectsSO.cs",
+              "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\ObjectsSO.cs",
+              "RelativeToolTip": "ObjectsSO.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAxwBEAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-25T02:46:03.236Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 7,
               "Title": "Form4.cs",
               "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form4.cs",
               "RelativeDocumentMoniker": "Form4.cs",
               "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Form4.cs",
               "RelativeToolTip": "Form4.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABgAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-22T19:24:52.509Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Form4.cs [Projeto]",
-              "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form4.cs",
-              "RelativeDocumentMoniker": "Form4.cs",
-              "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Form4.cs [Projeto]",
-              "RelativeToolTip": "Form4.cs [Projeto]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-22T19:24:00.624Z",
-              "EditorCaption": " [Projeto]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Form2.cs [Projeto]",
-              "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form2.cs",
-              "RelativeDocumentMoniker": "Form2.cs",
-              "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Form2.cs [Projeto]",
-              "RelativeToolTip": "Form2.cs [Projeto]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-22T18:00:08.977Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 4,
               "Title": "Form2.Designer.cs",
               "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form2.Designer.cs",
               "RelativeDocumentMoniker": "Form2.Designer.cs",
               "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Form2.Designer.cs",
               "RelativeToolTip": "Form2.Designer.cs",
-              "ViewState": "AgIAABYAAAAAAAAAAAAowBYAAAAEAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-22T17:58:33.96Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 6,
               "Title": "Program.cs",
               "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-17T23:43:53.135Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 9,
               "Title": "Form3.Designer.cs",
               "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form3.Designer.cs",
               "RelativeDocumentMoniker": "Form3.Designer.cs",
@@ -138,7 +116,8 @@
               "RelativeToolTip": "Form3.Designer.cs",
               "ViewState": "AgIAANoAAAAAAAAAAAAowPQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-17T23:43:41.797Z"
+              "WhenOpened": "2024-12-17T23:43:41.797Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -148,51 +127,27 @@
               "RelativeDocumentMoniker": "Form3.cs",
               "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Form3.cs",
               "RelativeToolTip": "Form3.cs",
-              "ViewState": "AgIAAOsBAAAAAAAAAAAwwAoCAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAFIAAAAAAAAAAAAcwIoAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-17T23:43:26.494Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 3,
               "Title": "Form2.cs",
               "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form2.cs",
               "RelativeDocumentMoniker": "Form2.cs",
               "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Form2.cs",
               "RelativeToolTip": "Form2.cs",
-              "ViewState": "AgIAAMUBAAAAAAAAAAAwwOEBAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAEsBAAAAAAAAAAAqwOEBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-17T01:05:22.398Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Form1.Designer.cs",
-              "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form1.Designer.cs",
-              "RelativeDocumentMoniker": "Form1.Designer.cs",
-              "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Form1.Designer.cs",
-              "RelativeToolTip": "Form1.Designer.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-17T01:01:06.55Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Form1.cs",
-              "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form1.cs",
-              "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Form1.cs",
-              "RelativeToolTip": "Form1.cs",
-              "ViewState": "AgIAAIcAAAAAAAAAAAAAwIgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-17T00:13:29.875Z",
+              "WhenOpened": "2024-12-17T01:05:22.398Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "PlaySO.csproj",
               "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\PlaySO.csproj",
               "RelativeDocumentMoniker": "PlaySO.csproj",
@@ -204,25 +159,37 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Form4.cs [Projeto]",
+              "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form4.cs",
+              "RelativeDocumentMoniker": "Form4.cs",
+              "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Form4.cs [Projeto]",
+              "RelativeToolTip": "Form4.cs [Projeto]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-22T19:24:00.624Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "Form2.cs [Projeto]",
+              "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form2.cs",
+              "RelativeDocumentMoniker": "Form2.cs",
+              "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Form2.cs [Projeto]",
+              "RelativeToolTip": "Form2.cs [Projeto]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-22T18:00:08.977Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "Form3.cs [Projeto]",
               "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form3.cs",
               "RelativeDocumentMoniker": "Form3.cs",
               "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Form3.cs [Projeto]",
               "RelativeToolTip": "Form3.cs [Projeto]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-17T23:44:58.379Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Form1.cs [Projeto]",
-              "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form1.cs",
-              "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Form1.cs [Projeto]",
-              "RelativeToolTip": "Form1.cs [Projeto]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-17T00:00:49.919Z"
+              "WhenOpened": "2024-12-17T23:44:58.379Z",
+              "EditorCaption": " [Projeto]"
             }
           ]
         }
