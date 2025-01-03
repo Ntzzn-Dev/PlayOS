@@ -25,10 +25,9 @@ public partial class Form3 : Form
     private bool appsOcultos = true;
     int heightPnlApps;
     // Temporizadores =================
-    private static System.Timers.Timer temporizadorDoRelogio, timerMonitorarProcessos, timerProcessoEstabilizar;
+    private static System.Timers.Timer temporizadorDoRelogio, timerProcessoEstabilizar;
     private static DateTime horario;
-    // Processos ======================
-    private HashSet<int> processosIniciados = new HashSet<int>();
+    // Hotkeys e DLL ==================
     private const int WM_HOTKEY = 0x0312;
 
     [DllImport("user32.dll")]
@@ -240,6 +239,7 @@ public partial class Form3 : Form
     {
         this.Hide();
         notifyIcon.ShowBalloonTip(1000, "Aplicativo Minimizado", "Clique para restaurar", ToolTipIcon.Info);
+        timerProcessoEstabilizar.Enabled = false;
     }
 
     // Atalho atual -------------------------------------------------------------------------------
@@ -336,8 +336,6 @@ public partial class Form3 : Form
                 UseShellExecute = true
             };
             jogoAberto = Process.Start(psi);
-
-            IniciarMonitoramento();
 
             MonitoramentoDeProcesos();
         }
@@ -441,65 +439,37 @@ public partial class Form3 : Form
     }
 
     // Monitoramento de processos -----------------------------------------------------------------
-    public void IniciarMonitoramento()
-    {
-        timerMonitorarProcessos = new System.Timers.Timer(1000);
-        timerMonitorarProcessos.Elapsed += MonitorarNovosProcessos;
-        timerMonitorarProcessos.AutoReset = true;
-        timerMonitorarProcessos.Enabled = true;
-    }
     private void MonitoramentoDeProcesos(){
-        timerProcessoEstabilizar = new System.Timers.Timer(60000); //Tempo maximo de monitoramento de processos
+        timerProcessoEstabilizar = new System.Timers.Timer(5000); //Tempo maximo de monitoramento de processos
         timerProcessoEstabilizar.Elapsed += VerificacaoProcessoEstabilizado;
-        timerProcessoEstabilizar.AutoReset = false;
+        timerProcessoEstabilizar.AutoReset = true;
         timerProcessoEstabilizar.Enabled = true;
     }
-    private void MonitorarNovosProcessos(object sender, ElapsedEventArgs e)
-    {
+    private void VerificacaoProcessoEstabilizado(object sender, ElapsedEventArgs e){
         var processosAtuais = Process.GetProcesses();
+        
         foreach (var processo in processosAtuais)
         {
-            try
-            {
-                if (IgnorarProcesso(processo) || processosIniciados.Contains(processo.Id))
-                    continue;
+            try{
+                if (IgnorarProcesso(processo))
+                        continue;
 
-                processosIniciados.Add(processo.Id);
-
-                if (jogoAberto != null)
-                {
-                    if (processo.MainWindowHandle != IntPtr.Zero)
-                    {
-                        jogoAberto.Exited -= AoFecharAtalho;
-                        jogoAberto = processo;
-                        jogoAberto.EnableRaisingEvents = true;
-                        jogoAberto.Exited += AoFecharAtalho;
-                        if(IsFullscreenWithoutBorders(processo)){
-                            MandarPraBandeja();
-                            PicGIFRemover();
-                        }
-                        //MessageBox.Show($"Novo processo monitorado: {jogoAberto.ProcessName} (ID: {jogoAberto.Id})");
-                    }
+                if(IsFullscreenWithoutBorders(processo)){
+                    MessageBox.Show(processo.ProcessName);
+                    jogoAberto.Exited -= AoFecharAtalho;
+                    jogoAberto = processo;
+                    jogoAberto.EnableRaisingEvents = true;
+                    jogoAberto.Exited += AoFecharAtalho;
+                    PicGIFRemover();
+                    MandarPraBandeja();
                 }
-                /*else
-                {
-                    MessageBox.Show($"Processo inicial detectado: {jogoAberto.ProcessName} (ID: {jogoAberto.Id})");
-                }*/
+            
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Erro ao acessar processo {processo.Id}: {ex.Message}");
             }
         }
-    }
-    private void VerificacaoProcessoEstabilizado(object sender, ElapsedEventArgs e){
-        jogoAberto.Exited -= AoFecharAtalho;
-        jogoAberto.Exited += AoFecharAtalho;
-        
-        jogoAberto.EnableRaisingEvents = true;
-        
-        timerMonitorarProcessos.Enabled = false; 
-        timerProcessoEstabilizar.Enabled = false;
     }
     private bool IgnorarProcesso(Process processo)
     {

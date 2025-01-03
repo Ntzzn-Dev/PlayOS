@@ -54,7 +54,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 10,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Document",
@@ -66,8 +66,7 @@
               "RelativeToolTip": "ObjectsSO.cs",
               "ViewState": "AgIAAAQAAAAAAAAAAAAxwBEAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-25T02:46:03.236Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-25T02:46:03.236Z"
             },
             {
               "$type": "Document",
@@ -159,6 +158,18 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form3.cs [Projeto]",
+              "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form3.cs",
+              "RelativeDocumentMoniker": "Form3.cs",
+              "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Form3.cs [Projeto]",
+              "RelativeToolTip": "Form3.cs [Projeto]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T23:44:58.379Z",
+              "EditorCaption": " [Projeto]"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 8,
               "Title": "Form4.cs [Projeto]",
               "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form4.cs",
@@ -178,18 +189,6 @@
               "RelativeToolTip": "Form2.cs [Projeto]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-22T18:00:08.977Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Form3.cs [Projeto]",
-              "DocumentMoniker": "H:\\Projects\\CSharp\\PlaySO\\Form3.cs",
-              "RelativeDocumentMoniker": "Form3.cs",
-              "ToolTip": "H:\\Projects\\CSharp\\PlaySO\\Form3.cs [Projeto]",
-              "RelativeToolTip": "Form3.cs [Projeto]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-17T23:44:58.379Z",
-              "EditorCaption": " [Projeto]"
             }
           ]
         }
