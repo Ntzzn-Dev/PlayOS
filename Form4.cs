@@ -1,0 +1,260 @@
+﻿namespace PlaySO;
+using System.Diagnostics;
+using System.Windows.Forms;
+using SkiaSharp;
+
+public partial class Form4 : Form
+{
+    Process navegadorAberto;
+    int imgCarregada = 0;
+    public Form4(Process navegador, string acaoAtual)
+    {
+        InitializeComponent();
+
+        DefinirGatilhos();
+
+        navegadorAberto = navegador;
+
+        lblTelaColaWeb.Text = acaoAtual;
+
+        picImagemDaWeb.Image = Image.FromFile(Form2.caminhoImgPadrao);
+
+        txtbxURLWeb.KeyDown += (s, e) => {if(e.KeyCode == Keys.Enter){BaixarImgs(txtbxURLWeb.Text);}};
+    }
+    public Form4(string acaoAtual)
+    {
+        InitializeComponent();
+        
+        DefinirGatilhos();
+
+        lblTelaColaWeb.Text = acaoAtual;
+
+        picImagemDaWeb.Image = Image.FromFile(Form2.caminhoImgPadrao);
+    }
+
+    private void DefinirGatilhos()
+    {
+        btnRetornoWeb.Click += (s, e) => RetornarURL();
+        btnCancelarWeb.Click += (s, e) => FecharBuscaWeb();
+
+        txtbxURLWeb.KeyDown += EnterToEndCola;
+    }
+    private void EnterToEndCola(object sender, KeyEventArgs e)
+    {
+        if (e.KeyCode == Keys.Enter)
+        {
+            e.SuppressKeyPress = true;
+            if (sender == txtbxURLWeb)
+            {
+                if (imgCarregada == 1)
+                {
+                    RetornarURL();  ///Testar
+                    imgCarregada = 0;
+                }
+            }
+        }
+    }
+    private void RetornarURL()
+    {
+        if (this.Owner is Form2 form2)
+        {
+            int labelEspecificado = 0;
+            if(lblTelaColaWeb.Text.Equals("Imagem do icone")) { labelEspecificado = 1;} else
+            if(lblTelaColaWeb.Text.Equals("Imagem do icone app")) { labelEspecificado = 2;} else
+            if(lblTelaColaWeb.Text.Equals("Colar URL ou URI")) { labelEspecificado = 3;}
+
+            form2.DadoRecebidoOnline(txtbxURLWeb.Text, labelEspecificado);
+
+            if (this.Owner != null)
+            {
+                this.Owner.Show();
+                this.Owner.Owner.Show();
+            }
+        }
+    }
+    private void FecharBuscaWeb()
+    {
+        if (navegadorAberto != null && !navegadorAberto.HasExited)
+        {
+            navegadorAberto.Kill();
+        }
+
+        if (this.Owner != null)
+        {
+            this.Owner.Show();
+            this.Owner.Owner.Show();
+        }
+
+        this.Close();
+    }
+    private async Task BaixarImgs(string pathToImg)
+    {
+        try
+        {
+            bool eIcone = lblTelaColaWeb.Text.Contains("icone");
+            byte[] bytesDaImg = new byte[0];
+            string formato = await DetectarFormatoAsync(pathToImg);
+            
+            if (string.IsNullOrEmpty(pathToImg))
+            {
+                picImagemDaWeb.Image = Image.FromFile(Form2.caminhoImgPadrao);
+                return;
+            }
+            if (File.Exists(pathToImg))
+            {
+                Image imgCarregada = Image.FromFile(pathToImg);
+                if (imgCarregada.Width != imgCarregada.Height && eIcone)
+                {
+                    txtbxURLWeb.Text = "";
+                    MessageBox.Show("a imagem deve ser quadrada");
+                }
+                else
+                {
+                    picImagemDaWeb.Image = imgCarregada;
+                }
+            }
+            else if (pathToImg.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
+            {
+                var base64Data = pathToImg.Split(',')[1];
+                bytesDaImg = Convert.FromBase64String(base64Data);
+
+                using (MemoryStream stream = new MemoryStream(bytesDaImg))
+                {
+                    Image imgCarregada = Image.FromStream(stream);
+                    if (imgCarregada.Width != imgCarregada.Height && eIcone)
+                    {
+                        txtbxURLWeb.Text = "";
+                        MessageBox.Show("a imagem deve ser quadrada");
+                    }
+                    else
+                    {
+                        picImagemDaWeb.Image = imgCarregada;
+                    }
+                }
+            } 
+            else if (formato == "WEBP")
+            {
+                Image imagem = await CarregarImagemWebpAsync(pathToImg);
+
+                if (imagem != null){
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        Bitmap bitmap = new Bitmap(imagem);
+                        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        if (imagem.Width != imagem.Height && eIcone)
+                        {
+                            txtbxURLWeb.Text = "";
+                            MessageBox.Show("a imagem deve ser quadrada");
+                        }
+                        else
+                        {
+                            picImagemDaWeb.Image = bitmap;
+                        }
+                    }
+                }    
+            }
+            else if (formato == "ICO")
+            {
+                Image imagem = await BaixarEConverterIcoAsync(pathToImg);
+
+                if (imagem != null){
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        Bitmap bitmap = new Bitmap(imagem);
+                        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        if (imagem.Width != imagem.Height && eIcone)
+                        {
+                            txtbxURLWeb.Text = "";
+                            MessageBox.Show("a imagem deve ser quadrada");
+                        }
+                        else
+                        {
+                            picImagemDaWeb.Image = bitmap;
+                        };
+                    }
+                }                
+            }
+            else
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    bytesDaImg = await client.GetByteArrayAsync(pathToImg);
+
+                    using (MemoryStream stream = new MemoryStream(bytesDaImg))
+                    {
+                        Image imgCarregada = Image.FromStream(stream);
+                        if (imgCarregada.Width != imgCarregada.Height && eIcone)
+                        {
+                            txtbxURLWeb.Text = "";
+                            MessageBox.Show("a imagem deve ser quadrada");
+                        }
+                        else
+                        {
+                            picImagemDaWeb.Image = imgCarregada;
+                        }
+                    }
+                }
+            }
+            imgCarregada = 1;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erro ao baixar a imagem: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+    private async Task<string> DetectarFormatoAsync(string url)
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            byte[] bytes = await client.GetByteArrayAsync(url);
+
+            if (bytes.Length >= 12)
+            {
+                string header = BitConverter.ToString(bytes.Take(12).ToArray()).Replace("-", "");
+
+                if (header.StartsWith("52494646") && header.Contains("57454250")) // WEBP
+                    return "WEBP";
+
+                if (header.StartsWith("00000100") || header.StartsWith("00000200")) // ICO
+                    return "ICO";
+            }
+
+            return "OUTRO";
+        }
+    }
+    private async Task<Image> CarregarImagemWebpAsync(string url)
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            byte[] bytes = await client.GetByteArrayAsync(url);
+
+            using (var ms = new MemoryStream(bytes))
+            {
+                SKBitmap bitmap = SKBitmap.Decode(ms);
+                return Image.FromStream(bitmap.Encode(SKEncodedImageFormat.Png, 100).AsStream());
+            }
+        }
+    }
+    private async Task<Image> BaixarEConverterIcoAsync(string url)
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            byte[] icoBytes = await client.GetByteArrayAsync(url);
+
+            using (var ms = new MemoryStream(icoBytes))
+            {
+                SKBitmap bitmap = SKBitmap.Decode(ms);
+                if (bitmap == null)
+                    throw new Exception("Não foi possível decodificar a imagem como um ícone válido.");
+
+                using (MemoryStream pngStream = new MemoryStream())
+                {
+                    bitmap.Encode(pngStream, SKEncodedImageFormat.Png, 100);
+                    pngStream.Seek(0, SeekOrigin.Begin);
+                    return Image.FromStream(pngStream);
+                }
+            }
+        }
+    }
+}
+
