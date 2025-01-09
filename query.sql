@@ -4,7 +4,9 @@ CREATE TABLE AtalhosdeAplicativos (
     Caminho TEXT NOT NULL,
     Parametro TEXT NOT NULL,
     Imagem BLOB NOT NULL,
-    Icon BLOB NOT NULL
+    Icon BLOB NOT NULL,
+    DataUltimaSessao TEXT,
+    TempoUltimaSessao TEXT
 );
 CREATE TABLE AplicativosExtras (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,6 +28,7 @@ DROP TABLE AplicativosExtras;
 
 INSERT INTO AtalhosdeAplicativos (Nome, Caminho, Parametro, Imagem, Icon) VALUES ("Need for Speed - Most Wanted", "C:/", "", "", "");
 INSERT INTO AplicativosExtras (Nome, Caminho, Icon) VALUES ("Spotify", "spotify:playlist:6Jdt0jq9Ws3cKZE8ujrZlv?si=e26e69baf7d74a79", "");
+
 
 /*
 spotify:playlist:6Jdt0jq9Ws3cKZE8ujrZlv?si=e26e69baf7d74a79

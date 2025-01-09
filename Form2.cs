@@ -11,12 +11,14 @@ using System.Collections;
 public partial class Form2 : Form
 {
     private int idDeAlteracao = 0, imgCarregada = 0;
-    private Image img, icn;
     public Form2()
     {
         InitializeComponent();
         DefinirGatilhos();
         DefinirImgsPadrao();
+
+        btnSalvarAtalho.Click += (s, e) => SalvarAtalho();
+        btnSalvarApp.Click += (s, e) => SalvarApp();
     }
     public Form2(int id, int tipoDeEdicao)
     {
@@ -27,35 +29,32 @@ public partial class Form2 : Form
         {
             case 0:
                 DadosAtalho(id);
-                tabPageCdtApps.Enabled = false;
-                if (idDeAlteracao != 0) { btnSalvar.Click -= BtnSalvarAtalho; btnSalvar.Click += (s, e) => AlterarAtalho(); }
+                TrocarPage(1);
+                if (idDeAlteracao != 0) { btnSalvarAtalho.Click += (s, e) => AlterarAtalho(); }
                 break;
             case 1:
                 DadosApp(id);
-                tabAbasCadastros.SelectedIndex = 1;
-                tabPageCdtAtalho.Enabled = false;
-                if (idDeAlteracao != 0) { btnSalvarApp.Click -= BtnSalvarApp; btnSalvarApp.Click += (s, e) => AlterarApp(); }
+                TrocarPage(2);
+                if (idDeAlteracao != 0) { btnSalvarApp.Click += (s, e) => AlterarApp(); }
                 break;
         }
-    
+
     }
     //Primeira aba - Atalhos
     private void DefinirImgsPadrao()
     {
-        img = Image.FromFile(Referencias.caminhoImgPadrao);
-        icn = Image.FromFile(Referencias.caminhoImgPadrao);
-        pictureImgGame.Image = img;
-        pictureIconGame.Image = img;
-        picImgIconeApp.Image = img;
+        picImgAtalho.Image = Properties.Resources.Morgan;
+        picImgIconAtalho.Image = Properties.Resources.Morgan;
+        picImgIconeApp.Image = Properties.Resources.Morgan;
     }
     private void SalvarAtalho()
     {
         Atalhos AtalhoSalvamento = new Atalhos();
-        AtalhoSalvamento.setNomeAtalho(nomeGame.Text);
-        AtalhoSalvamento.setCaminhoAtalho(caminhoGame.Text);
-        AtalhoSalvamento.setParametroAtalho(parametroGame.Text);
-        AtalhoSalvamento.setImgAtalho(img);
-        AtalhoSalvamento.setIconeAtalho(icn);
+        AtalhoSalvamento.setNomeAtalho(txtbxNomeAtalho.Texto);
+        AtalhoSalvamento.setCaminhoAtalho(txtbxPathAtalho.Texto);
+        AtalhoSalvamento.setParametroAtalho(txtbxParamAtalho.Texto);
+        AtalhoSalvamento.setImgAtalho(picImgAtalho.Image);
+        AtalhoSalvamento.setIconeAtalho(picImgIconAtalho.Image);
 
         Atalhos.Salvar(AtalhoSalvamento);
 
@@ -65,11 +64,11 @@ public partial class Form2 : Form
     {
         Atalhos atalhoAlteracao = new Atalhos();
         atalhoAlteracao.setIdAtalho(idDeAlteracao);
-        atalhoAlteracao.setNomeAtalho(nomeGame.Text);
-        atalhoAlteracao.setCaminhoAtalho(caminhoGame.Text);
-        atalhoAlteracao.setParametroAtalho(parametroGame.Text);
-        atalhoAlteracao.setImgAtalho(img);
-        atalhoAlteracao.setIconeAtalho(icn);
+        atalhoAlteracao.setNomeAtalho(txtbxNomeAtalho.Texto);
+        atalhoAlteracao.setCaminhoAtalho(txtbxPathAtalho.Texto);
+        atalhoAlteracao.setParametroAtalho(txtbxParamAtalho.Texto);
+        atalhoAlteracao.setImgAtalho(picImgAtalho.Image);
+        atalhoAlteracao.setIconeAtalho(picImgIconAtalho.Image);
 
         Atalhos.Alterar(atalhoAlteracao);
 
@@ -80,14 +79,14 @@ public partial class Form2 : Form
         Atalhos atalhoAtual = new Atalhos(id);
 
         idDeAlteracao = atalhoAtual.getIdAtalho();
-        nomeGame.Text = atalhoAtual.getNomeAtalho();
-        caminhoGame.Text = atalhoAtual.getCaminhoAtalho();
-        parametroGame.Text = atalhoAtual.getParametroAtalho();
-        pictureImgGame.Image = atalhoAtual.getImgAtalho();
-        pictureIconGame.Image = atalhoAtual.getIconeAtalho();
+        txtbxNomeAtalho.Texto = atalhoAtual.getNomeAtalho();
+        txtbxPathAtalho.Texto = atalhoAtual.getCaminhoAtalho();
+        txtbxParamAtalho.Texto = atalhoAtual.getParametroAtalho();
+        picImgAtalho.Image = atalhoAtual.getImgAtalho();
+        picImgIconAtalho.Image = atalhoAtual.getIconeAtalho();
 
-        imgGame.PlaceholderText = "Deixe em branco para manter a imagem";
-        iconGame.PlaceholderText = "Deixe em branco para manter o icone";
+        txtbxImgAtalho.LblPlaceholder = "Deixe em branco para manter a imagem";
+        txtbxImgIconAtalho.LblPlaceholder = "Deixe em branco para manter o icone";
     }
     private void ObterDestinoAtalho(string atalho)
     {
@@ -113,9 +112,9 @@ public partial class Form2 : Form
             argumentos = atalhos.Arguments;
         }
 
-        caminhoGame.Text = destino;
-        parametroGame.Text = argumentos;
-        nomeGame.Text = nomeAtalho;
+        txtbxPathAtalho.Texto = destino;
+        txtbxParamAtalho.Texto = argumentos;
+        txtbxNomeAtalho.Texto = nomeAtalho;
     }
     private string ObterPastaXbox()
     {
@@ -136,11 +135,13 @@ public partial class Form2 : Form
     private bool PegarIds()
     {
         ArrayList ids = Atalhos.ConsultarIDs();
-        
+
         if (ids.Count > 0)
         {
             return false;
-        }else{
+        }
+        else
+        {
             return true;
         }
     }
@@ -151,7 +152,7 @@ public partial class Form2 : Form
 
         if (ofd.ShowDialog() == DialogResult.OK)
         {
-            caminhoGame.Text = ofd.FileName;
+            txtbxPathAtalho.Texto = ofd.FileName;
         }
     }
     private void BtnImportarAtalho(object sender, EventArgs e)
@@ -167,32 +168,28 @@ public partial class Form2 : Form
             }
         }
     }
-    private void BtnSalvarAtalho(object sender, EventArgs e)
-    {
-        SalvarAtalho();
-    }
     private void EnterToEndAtalhos(object sender, KeyEventArgs e)
     {
         if (e.KeyCode == Keys.Enter)
         {
             e.SuppressKeyPress = true;
-            if (sender == nomeGame)
+            if (sender == txtbxNomeAtalho)
             {
-                caminhoGame.Focus();
+                txtbxPathAtalho.Focus();
             }
-            else if (sender == caminhoGame)
+            else if (sender == txtbxPathAtalho)
             {
-                parametroGame.Focus();
+                txtbxParamAtalho.Focus();
             }
-            else if (sender == parametroGame)
+            else if (sender == txtbxParamAtalho)
             {
-                imgGame.Focus();
+                txtbxImgAtalho.Focus();
             }
-            else if (sender == imgGame)
+            else if (sender == txtbxImgAtalho)
             {
-                iconGame.Focus();
+                txtbxImgIconAtalho.Focus();
             }
-            else if (sender == iconGame)
+            else if (sender == txtbxImgIconAtalho)
             {
                 if (imgCarregada == 1)
                 {
@@ -209,9 +206,9 @@ public partial class Form2 : Form
     private void SalvarApp()
     {
         Aplicativos appAtual = new Aplicativos();
-        appAtual.setNomeAplicativo(txtbxNomeApp.Text);
-        appAtual.setCaminhoAplicativo(txtbxURLApp.Text);
-        appAtual.setIconeAplicativo(icn);
+        appAtual.setNomeAplicativo(txtbxNomeApp.Texto);
+        appAtual.setCaminhoAplicativo(txtbxURLApp.Texto);
+        appAtual.setIconeAplicativo(picImgIconeApp.Image);
 
         Aplicativos.Salvar(appAtual);
 
@@ -221,9 +218,9 @@ public partial class Form2 : Form
     {
         Aplicativos appAlteracao = new Aplicativos();
         appAlteracao.setIdAplicativo(idDeAlteracao);
-        appAlteracao.setNomeAplicativo(txtbxNomeApp.Text);
-        appAlteracao.setCaminhoAplicativo(txtbxURLApp.Text);
-        appAlteracao.setIconeAplicativo(icn);
+        appAlteracao.setNomeAplicativo(txtbxNomeApp.Texto);
+        appAlteracao.setCaminhoAplicativo(txtbxURLApp.Texto);
+        appAlteracao.setIconeAplicativo(picImgIconeApp.Image);
 
         Aplicativos.Alterar(appAlteracao);
 
@@ -234,15 +231,11 @@ public partial class Form2 : Form
         Aplicativos appAtual = new Aplicativos(id);
 
         idDeAlteracao = appAtual.getIdAplicativo();
-        txtbxNomeApp.Text = appAtual.getNomeAplicativo();
-        txtbxURLApp.Text = appAtual.getCaminhoAplicativo();
+        txtbxNomeApp.Texto = appAtual.getNomeAplicativo();
+        txtbxURLApp.Texto = appAtual.getCaminhoAplicativo();
         picImgIconeApp.Image = appAtual.getIconeAplicativo();
 
-        txtbxImgIconeApp.PlaceholderText = "Deixe em branco para manter o icone";
-    }
-    private void BtnSalvarApp(object sender, EventArgs e)
-    {
-        SalvarApp();
+        txtbxImgIconeApp.LblPlaceholder = "Deixe em branco para manter o icone";
     }
     private void EnterToEndApps(object sender, KeyEventArgs e)
     {
@@ -274,55 +267,80 @@ public partial class Form2 : Form
     public void DefinirGatilhos()
     {
         btnProcurarArq.Click += BtnProcurarExecutavel;
-        btnImgLocal.Click += BtnProcurarImgLocal;
-        btnImgGoogle.Click += BtnProcurarImgOnline;
-        btnIconLocal.Click += BtnProcurarImgLocal;
-        btnIconGoogle.Click += BtnProcurarImgOnline;
+        btnImgAtalhoLocal.Click += BtnProcurarImgLocal;
+        btnImgAtalhoOnline.Click += BtnProcurarImgOnline;
+        btnImgIconAtalhoLocal.Click += BtnProcurarImgLocal;
+        btnImgIconAtalhoOnline.Click += BtnProcurarImgOnline;
         btnImportAtalho.Click += BtnImportarAtalho;
-        btnSalvar.Click += BtnSalvarAtalho;
-        btnCancelar.Click += (s, e) => FecharCadastro();
+        btnCancelarAtalho.Click += (s, e) => FecharCadastro();
 
-        imgGame.KeyDown += (s, e) => {if(e.KeyCode == Keys.Enter){ BaixarImgs(imgGame.Text, pictureImgGame);}}; 
-        iconGame.KeyDown += (s, e) => {if(e.KeyCode == Keys.Enter){ BaixarImgs(iconGame.Text, pictureIconGame);}}; 
-        imgGame.TextChanged += (s, e) => BaixarImgs(imgGame.Text, pictureImgGame);
-        iconGame.TextChanged += (s, e) => BaixarImgs(iconGame.Text, pictureIconGame);
+        titleBar.FecharCustom += (s, e) => FecharCadastro();
 
-        nomeGame.KeyDown += EnterToEndAtalhos;
-        caminhoGame.KeyDown += EnterToEndAtalhos;
-        parametroGame.KeyDown += EnterToEndAtalhos;
-        imgGame.KeyDown += EnterToEndAtalhos;
-        iconGame.KeyDown += EnterToEndAtalhos;
+        btnPageAtalhos.Click += (s, e) => TrocarPage(1);
+        btnPageAplicativo.Click += (s, e) => TrocarPage(2);
+
+        txtbxImgAtalho.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) { BaixarImgs(txtbxImgAtalho.Texto, picImgAtalho); } };
+        txtbxImgIconAtalho.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) { BaixarImgs(txtbxImgIconAtalho.Texto, picImgIconAtalho); } };
+        txtbxImgAtalho.TextoChanged += (s, e) => BaixarImgs(txtbxImgAtalho.Texto, picImgAtalho);
+        txtbxImgIconAtalho.TextoChanged += (s, e) => BaixarImgs(txtbxImgIconAtalho.Texto, picImgIconAtalho);
+
+        txtbxNomeAtalho.KeyDown += EnterToEndAtalhos;
+        txtbxPathAtalho.KeyDown += EnterToEndAtalhos;
+        txtbxParamAtalho.KeyDown += EnterToEndAtalhos;
+        txtbxImgAtalho.KeyDown += EnterToEndAtalhos;
+        txtbxImgIconAtalho.KeyDown += EnterToEndAtalhos;
 
         //Segunda Aba - Aplicativos
 
         btnIconOnlineApp.Click += BtnProcurarImgOnline;
         btnIconLocalApp.Click += BtnProcurarImgLocal;
         btnURLExtApp.Click += (s, e) => CriarTelaDeCola(null, "Colar URL ou URI");
-        btnSalvarApp.Click += BtnSalvarApp;
         btnCancelarApp.Click += (s, e) => FecharCadastro();
 
-        txtbxImgIconeApp.KeyDown += (s, e) => {if(e.KeyCode == Keys.Enter){BaixarImgs(txtbxImgIconeApp.Text, picImgIconeApp);}};
-        txtbxImgIconeApp.TextChanged += (s, e) => BaixarImgs(txtbxImgIconeApp.Text, picImgIconeApp);
+        txtbxImgIconeApp.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) { BaixarImgs(txtbxImgIconeApp.Texto, picImgIconeApp); } };
+        txtbxImgIconeApp.TextoChanged += (s, e) => BaixarImgs(txtbxImgIconeApp.Texto, picImgIconeApp);
 
         txtbxNomeApp.KeyDown += EnterToEndApps;
         txtbxURLApp.KeyDown += EnterToEndApps;
         txtbxImgIconeApp.KeyDown += EnterToEndApps;
+    }
+    private void TrocarPage(int indice)
+    {
+        int atalho = 0, app = 0;
+
+        btnPageAtalhos.BackColor = Color.FromArgb(44, 44, 44);
+        btnPageAplicativo.BackColor = Color.FromArgb(44, 44, 44);
+
+        switch (indice)
+        {
+            case 1:
+                atalho = 511;
+                btnPageAtalhos.BackColor = Color.FromArgb(26, 26, 26);
+                break;
+            case 2:
+                app = 511;
+                btnPageAplicativo.BackColor = Color.FromArgb(26, 26, 26);
+                break;
+        }
+
+        pnlCdtAtalho.Size = new Size(669, atalho);
+        pnlCdtAplicativo.Size = new Size(669, app);
     }
     public void DadoRecebidoOnline(string urlRecebida, int labelEspecificado)
     {
         switch (labelEspecificado)
         {
             case 0:
-                imgGame.Text = urlRecebida;
+                txtbxImgAtalho.Texto = urlRecebida;
                 break;
             case 1:
-                iconGame.Text = urlRecebida;
+                txtbxImgIconAtalho.Texto = urlRecebida;
                 break;
             case 2:
-                txtbxImgIconeApp.Text = urlRecebida;
+                txtbxImgIconeApp.Texto = urlRecebida;
                 break;
             case 3:
-                txtbxURLApp.Text = urlRecebida;
+                txtbxURLApp.Texto = urlRecebida;
                 break;
         }
     }
@@ -349,12 +367,12 @@ public partial class Form2 : Form
     }
     private void BtnProcurarImgOnline(object sender, EventArgs e)
     {
-        string palavraChave = nomeGame.Text;
+        string palavraChave = txtbxNomeAtalho.Texto;
         string urlPesquisa = $"https://www.google.com/search?hl=pt-BR&tbm=isch&q={Uri.EscapeDataString(palavraChave)}";
 
-        if (sender == btnIconOnlineApp) { palavraChave = txtbxNomeApp.Text; }
+        if (sender == btnIconOnlineApp) { palavraChave = txtbxNomeApp.Texto; }
 
-        if (sender == btnIconGoogle || sender == btnIconOnlineApp)
+        if (sender == btnImgIconAtalhoOnline || sender == btnIconOnlineApp)
         {
             palavraChave += " Logo";
             urlPesquisa = $"https://www.google.com/search?as_st=y&hl=pt-BR&as_q={Uri.EscapeDataString(palavraChave)}&as_epq=&as_oq=&as_eq=&imgar=s&imgcolor=&imgtype=&cr=&as_sitesearch=&as_filetype=&tbs=&udm=2";
@@ -376,9 +394,9 @@ public partial class Form2 : Form
             }
 
             string acaoTelaCola = "";
-            if (sender == btnImgGoogle) { acaoTelaCola = imgdoJogo.Text; }
+            if (sender == btnImgAtalhoOnline) { acaoTelaCola = lblImgAtalho.Text; }
             else
-            if (sender == btnIconGoogle) { acaoTelaCola = iconDoJogo.Text; }
+            if (sender == btnImgIconAtalhoOnline) { acaoTelaCola = lblImgIconeApp.Text; }
             else
             if (sender == btnIconOnlineApp) { acaoTelaCola = lblImgIconeApp.Text; }
 
@@ -423,31 +441,31 @@ public partial class Form2 : Form
         OpenFileDialog ofd = new OpenFileDialog();
         ofd.Filter = "Imagens (*.jpg;*.png;*.webp;*.jpeg)|*.jpg;*.png;*.webp;*.jpeg";
 
-        if (sender == btnImgLocal)
+        if (sender == btnImgAtalhoLocal)
         {
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                imgGame.Text = ofd.FileName;
+                txtbxImgAtalho.Texto = ofd.FileName;
             }
         }
-        if (sender == btnIconLocal)
+        if (sender == btnImgIconAtalhoLocal)
         {
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                iconGame.Text = ofd.FileName;
+                txtbxImgIconAtalho.Texto = ofd.FileName;
             }
         }
         if (sender == btnIconLocalApp)
         {
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                txtbxImgIconeApp.Text = ofd.FileName;
+                txtbxImgIconeApp.Texto = ofd.FileName;
             }
         }
     }
     public void FecharCadastro()
     {
-        if(PegarIds()) { this.Owner.Close(); }
+        if (PegarIds()) { this.Owner.Close(); }
         this.Close();
     }
     private void CriarTelaDeCola(Process navegadorAberto, string acaoTelaCola)
@@ -480,15 +498,13 @@ public partial class Form2 : Form
         try
         {
             string formato = await DetectarFormatoAsync(pathToImg);
-            bool eIcone = pcbxEmUso == pictureIconGame || pcbxEmUso == picImgIconeApp;
-            byte[] bytesDaImg = new byte[0];
-                        
+            bool eIcone = pcbxEmUso == picImgIconAtalho || pcbxEmUso == picImgIconeApp;
+
             if (string.IsNullOrEmpty(pathToImg))
             {
-                if (caminhoGame.Text != "")
+                if (txtbxPathAtalho.Texto != "")
                 {
-                    pcbxEmUso.Image = Image.FromFile(Referencias.caminhoImgPadrao);
-                    bytesDaImg = File.ReadAllBytes(Referencias.caminhoImgPadrao);
+                    pcbxEmUso.Image = Properties.Resources.Morgan;
                 }
                 return;
             }
@@ -498,12 +514,11 @@ public partial class Form2 : Form
                 Image imgCarregada = Image.FromFile(pathToImg);
                 if (imgCarregada.Width != imgCarregada.Height && eIcone)
                 {
-                    iconGame.Text = "";
+                    txtbxImgIconAtalho.Texto = "";
                     MessageBox.Show("a imagem deve ser quadrada");
                 }
                 else
                 {
-                    bytesDaImg = File.ReadAllBytes(pathToImg);
                     pcbxEmUso.Image = imgCarregada;
                 }
             }
@@ -517,12 +532,11 @@ public partial class Form2 : Form
                     Image imgCarregada = Image.FromStream(stream);
                     if (imgCarregada.Width != imgCarregada.Height && eIcone)
                     {
-                        iconGame.Text = "";
+                        txtbxImgIconAtalho.Text = "";
                         MessageBox.Show("a imagem deve ser quadrada");
                     }
                     else
                     {
-                        bytesDaImg = Convert.FromBase64String(base64Data);
                         pcbxEmUso.Image = imgCarregada;
                     }
                 }
@@ -531,14 +545,14 @@ public partial class Form2 : Form
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    bytesDaImg = await client.GetByteArrayAsync(pathToImg);
+                    byte[] bytesDaImg = await client.GetByteArrayAsync(pathToImg);
 
                     using (MemoryStream stream = new MemoryStream(bytesDaImg))
                     {
                         Image imgCarregada = Image.FromStream(stream);
                         if (imgCarregada.Width != imgCarregada.Height && eIcone)
                         {
-                            iconGame.Text = "";
+                            txtbxImgIconAtalho.Texto = "";
                             MessageBox.Show("a imagem deve ser quadrada");
                         }
                         else
@@ -552,46 +566,33 @@ public partial class Form2 : Form
             {
                 Image imagem = await CarregarImagemWebpAsync(pathToImg);
 
-                if (imagem != null){
+                if (imagem != null)
+                {
                     using (MemoryStream ms = new MemoryStream())
                     {
                         Bitmap bitmap = new Bitmap(imagem);
                         bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
 
-                        bytesDaImg = ms.ToArray();
-
                         pcbxEmUso.Image = bitmap;
                     }
-                }    
+                }
             }
             else if (formato == "ICO")
             {
                 Image imagem = await BaixarEConverterIcoAsync(pathToImg);
 
-                if (imagem != null){
+                if (imagem != null)
+                {
                     using (MemoryStream ms = new MemoryStream())
                     {
                         Bitmap bitmap = new Bitmap(imagem);
                         bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
 
-                        bytesDaImg = ms.ToArray();
-
                         pcbxEmUso.Image = bitmap;
                     }
-                }                
+                }
             }
-            else {return;}
-
-            if (pcbxEmUso == pictureIconGame || pcbxEmUso == picImgIconeApp)
-            {
-                using (MemoryStream ms = new MemoryStream(bytesDaImg)) { icn = Image.FromStream(ms); }
-                imgCarregada = 1;
-            }
-            else
-            if (pcbxEmUso == pictureImgGame)
-            {
-                using (MemoryStream ms = new MemoryStream(bytesDaImg)) { img = Image.FromStream(ms); }
-            }
+            else { return; }
         }
         catch (Exception ex)
         {
@@ -600,10 +601,12 @@ public partial class Form2 : Form
     }
     private async Task<string> DetectarFormatoAsync(string url)
     {
-        if(url.StartsWith("data:", StringComparison.OrdinalIgnoreCase)){ return "BASE64"; } else 
-        if (File.Exists(url)) { return "LOCAL";} else 
+        if (url.StartsWith("data:", StringComparison.OrdinalIgnoreCase)) { return "BASE64"; }
+        else
+        if (File.Exists(url)) { return "LOCAL"; }
+        else
         if (Uri.TryCreate(url, UriKind.Absolute, out Uri? uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
-            {
+        {
             using (HttpClient client = new HttpClient())
             {
                 byte[] bytes = await client.GetByteArrayAsync(url);

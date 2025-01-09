@@ -11,6 +11,7 @@ using System.IO;
 using System.Drawing.Drawing2D;
 using System.Timers;
 using System.Runtime.InteropServices;
+using PlaySO.Properties;
 
 public partial class Form3 : Form
 {
@@ -19,7 +20,7 @@ public partial class Form3 : Form
     private Atalhos atalhoAtual;
     private Process jogoAberto;
     private int idAtual = 1;
-    // Mandeja ========================
+    // Bandeja ========================
     private NotifyIcon notifyIcon;
     // Painel APPS ====================
     private bool appsOcultos = true;
@@ -27,6 +28,7 @@ public partial class Form3 : Form
     // Temporizadores =================
     private static System.Timers.Timer temporizadorDoRelogio, timerProcessoEstabilizar;
     private static DateTime horario;
+    private SynchronizationContext _syncContext;
     // Hotkeys e DLL ==================
     private const int WM_HOTKEY = 0x0312;
 
@@ -46,20 +48,20 @@ public partial class Form3 : Form
 
         InitializeComponent();
 
+        _syncContext = SynchronizationContext.Current;
+        
         AtalhoPegarIds();
 
         DefinirGatilhos();
 
-        CriarNotificacao();
-
         CriarRelogio();
-        
+
         RegisterHotKey(this.Handle, 1, 0, (uint)Keys.NumPad5);                                              //Numpad5
-        RegisterHotKey(this.Handle, 2, (uint)ModifierKeys.Control | (uint)ModifierKeys.Alt , (uint)Keys.T); //Ctrl+Alt+T
+        RegisterHotKey(this.Handle, 2, (uint)ModifierKeys.Control | (uint)ModifierKeys.Alt, (uint)Keys.T); //Ctrl+Alt+T
     }
 
     // Atalho para voltar ao app minimizado //
-    
+
     [Flags]
     public enum ModifierKeys : uint
     {
@@ -82,7 +84,8 @@ public partial class Form3 : Form
                 this.Show();
                 this.WindowState = FormWindowState.Maximized;
             }
-            else if (idDoAtalho == 2) {
+            else if (idDoAtalho == 2)
+            {
                 MessageBox.Show("n fechar");
             }
         }
@@ -93,9 +96,9 @@ public partial class Form3 : Form
         UnregisterHotKey(this.Handle, 2);
         base.OnFormClosing(e);
     }
-    
+
     // Verificar jogo Maximizado //
-    
+
     [StructLayout(LayoutKind.Sequential)]
     private struct WINDOWPLACEMENT
     {
@@ -178,9 +181,10 @@ public partial class Form3 : Form
 
         return base.ProcessCmdKey(ref msg, keyData);
     }
-    
+
     // Inicio -------------------------------------------------------------------------------------
-    private void DefinirGatilhos(){
+    private void DefinirGatilhos()
+    {
         this.Load += AoCarregar;
 
         btnAbrir.Click += BtnAbrirAtalho;
@@ -198,11 +202,12 @@ public partial class Form3 : Form
     }
     private void AoCarregar(object sender, EventArgs e)
     {
-        if(atalhoAtual != null){
+        if (atalhoAtual != null)
+        {
             PicMergeImages(atalhoAtual.getImgAtalho());
             PicDefinirCorDeFundo(atalhoAtual.getImgAtalho(), pictureBox1);
         }
-        picPuxarApps.Image = Image.FromFile(Referencias.caminhoPicAppsShow);
+        picPuxarApps.Image = Properties.Resources.PicAppsShow;
         PicArredondarBordas(picPuxarApps, 0, 0, 30, 30);
         PegarApps();
     }
@@ -226,6 +231,14 @@ public partial class Form3 : Form
         contextMenu.Items.Add("Sair", null, SairPlayOS);
         notifyIcon.ContextMenuStrip = contextMenu;
     }
+    private void RemoverNotificacao()
+    {
+        if (notifyIcon != null)
+        {
+            notifyIcon.Visible = false;
+            notifyIcon.Dispose();
+        }
+    }
     private void RestaurarPlayOS(object sender, EventArgs e)
     {
         this.Show();
@@ -238,6 +251,7 @@ public partial class Form3 : Form
     private void MandarPraBandeja()
     {
         this.Hide();
+        CriarNotificacao();
         notifyIcon.ShowBalloonTip(1000, "Aplicativo Minimizado", "Clique para restaurar", ToolTipIcon.Info);
         timerProcessoEstabilizar.Enabled = false;
     }
@@ -259,7 +273,9 @@ public partial class Form3 : Form
         {
             if (!ids.Contains(idAtual)) { idAtual = (int)ids[0]; }
             AtalhoListar(idAtual);
-        } else {
+        }
+        else
+        {
             Cadastrar();
         }
     }
@@ -269,6 +285,9 @@ public partial class Form3 : Form
 
         LblPosicionarCorretamente(atalhoAtual.getNomeAtalho(), nameGame);
         LblPosicionarCorretamente(atalhoAtual.getCaminhoAtalho(), pathGame);
+
+        lblDataSessao.Text = "Data: " + atalhoAtual.getDataSessaoAtalho();
+        lblDuracaoSessao.Text = "Durou: " + atalhoAtual.getTempoSessaoAtalho();
 
         PicMergeImages(atalhoAtual.getImgAtalho());
         PicDefinirCorDeFundo(atalhoAtual.getImgAtalho(), pictureBox1);
@@ -292,7 +311,8 @@ public partial class Form3 : Form
 
         return null;
     }
-    private void AbrirEpicGames(string caminho,string diretorioTrabalho,string argumentacao,string permissao){
+    private void AbrirEpicGames(string caminho, string diretorioTrabalho, string argumentacao, string permissao)
+    {
         this.TopMost = true;
         Process.Start(caminho);
 
@@ -321,12 +341,14 @@ public partial class Form3 : Form
                 MessageBox.Show("Epic Games Launcher não foi encontrado.");
             }
         };
-        
+
         temporizadorEpicAberta.Enabled = true;
 
     }
-    private void AbrirAtalho (string caminho,string diretorioTrabalho,string argumentacao,string permissao){
-        try{
+    private void AbrirAtalho(string caminho, string diretorioTrabalho, string argumentacao, string permissao)
+    {
+        try
+        {
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = caminho,
@@ -337,6 +359,10 @@ public partial class Form3 : Form
             };
             jogoAberto = Process.Start(psi);
 
+            string inicioSessao = DateTime.Now.ToString("dd/MM/yy - HH:mm");
+            Atalhos.SessaoIniciada(inicioSessao, idAtual);
+            lblDataSessao.Text = "Data: " + inicioSessao;
+        
             MonitoramentoDeProcesos();
         }
         catch (Exception ex)
@@ -361,12 +387,17 @@ public partial class Form3 : Form
         if (processo != null)
         {
             TimeSpan tempoDecorrido = DateTime.Now - processo.StartTime;
-            MessageBox.Show($"O jogo '{processo.ProcessName}' foi fechado. Tempo de execução: {tempoDecorrido.TotalSeconds} segundos.");
+            string tempoDaSessao = tempoDecorrido.ToString(@"h'h'mm'm'");
+            Atalhos.SessaoFinalizada(tempoDaSessao, idAtual);
+            lblDuracaoSessao.Text = "Durou: " + tempoDaSessao;
         }
-
-        jogoAberto = null;
-        this.Show();
-        this.WindowState = FormWindowState.Maximized;
+        _syncContext.Post(_ =>
+        {
+            jogoAberto = null;
+            this.Show();
+            this.WindowState = FormWindowState.Maximized;
+            RemoverNotificacao();
+        }, null);
     }
     private bool GameNext()
     {
@@ -392,24 +423,27 @@ public partial class Form3 : Form
 
         return false;
     }
-    private void BtnAbrirAtalho(object sender, EventArgs e) {
+    private void BtnAbrirAtalho(object sender, EventArgs e)
+    {
         try
         {
             string caminho = atalhoAtual.getCaminhoAtalho();
             string permissao = "runas";
             string argumentacao = atalhoAtual.getParametroAtalho();
             string diretorioTrabalho = System.IO.Path.GetDirectoryName(caminho);
-            if(caminho.Contains("steam:"))
+            if (caminho.Contains("steam:"))
             {
                 permissao = "";
             }
-            if(caminho.Contains("epicgames"))
+            if (caminho.Contains("epicgames"))
             {
                 argumentacao = caminho;
                 caminho = GetEpicGames();
                 diretorioTrabalho = System.IO.Path.GetDirectoryName(caminho);
                 AbrirEpicGames(caminho, diretorioTrabalho, argumentacao, permissao);
-            }else{
+            }
+            else
+            {
                 AbrirAtalho(caminho, diretorioTrabalho, argumentacao, permissao);
             }
             PicGIFAbrindoJogo();
@@ -434,36 +468,42 @@ public partial class Form3 : Form
         {
             GamePrev();
         }
-        
+
         AtalhoPegarIds();
     }
 
     // Monitoramento de processos -----------------------------------------------------------------
-    private void MonitoramentoDeProcesos(){
+    private void MonitoramentoDeProcesos()
+    {
         timerProcessoEstabilizar = new System.Timers.Timer(5000); //Tempo maximo de monitoramento de processos
         timerProcessoEstabilizar.Elapsed += VerificacaoProcessoEstabilizado;
         timerProcessoEstabilizar.AutoReset = true;
         timerProcessoEstabilizar.Enabled = true;
     }
-    private void VerificacaoProcessoEstabilizado(object sender, ElapsedEventArgs e){
+    private void VerificacaoProcessoEstabilizado(object sender, ElapsedEventArgs e)
+    {
         var processosAtuais = Process.GetProcesses();
-        
+
         foreach (var processo in processosAtuais)
         {
-            try{
+            try
+            {
                 if (IgnorarProcesso(processo))
-                        continue;
+                    continue;
 
-                if(IsFullscreenWithoutBorders(processo)){
-                    MessageBox.Show(processo.ProcessName);
-                    jogoAberto.Exited -= AoFecharAtalho;
+                if (IsFullscreenWithoutBorders(processo))
+                {
+                    //MessageBox.Show(processo.ProcessName);
+                    if(jogoAberto != null){
+                        jogoAberto.Exited -= AoFecharAtalho;
+                    }
                     jogoAberto = processo;
                     jogoAberto.EnableRaisingEvents = true;
                     jogoAberto.Exited += AoFecharAtalho;
                     PicGIFRemover();
                     MandarPraBandeja();
                 }
-            
+
             }
             catch (Exception ex)
             {
@@ -495,16 +535,19 @@ public partial class Form3 : Form
         ArrayList idsApps = Aplicativos.ConsultarIDs();
         List<Aplicativos> appsContext = new List<Aplicativos>();
 
-        foreach(int id in idsApps){
+        foreach (int id in idsApps)
+        {
             Aplicativos appAtual = new Aplicativos(id);
             appsContext.Add(appAtual);
         }
 
         PnlPnlAddApp(appsContext);
     }
-    private void PnlPnlAddApp(List<Aplicativos> appsContext){
-        for(int i = 0; i < appsContext.Count; i++){
-            pnlApps.Controls.Add(CriacaoApp(appsContext[i], OrganizacaoApps(appsContext.Count, i+1)));
+    private void PnlPnlAddApp(List<Aplicativos> appsContext)
+    {
+        for (int i = 0; i < appsContext.Count; i++)
+        {
+            pnlApps.Controls.Add(CriacaoApp(appsContext[i], OrganizacaoApps(appsContext.Count, i + 1)));
         }
 
         appsContext.Clear();
@@ -516,19 +559,22 @@ public partial class Form3 : Form
         int meiaTela = this.Width / 2;
         int posicao = meiaTela - tamanhoApp / 2;
 
-        if(quantidadeDeApps%2 == 0){
+        if (quantidadeDeApps % 2 == 0)
+        {
             posicao += 62; //Centraliza para quantidades pares
         }
 
         int metadeDosApps = quantidadeDeApps / 2 + 1;
 
         //posicao diminui o tamanho do panel * posicao em relacao a metade - margem de distancia entre os apps
-        posicao += -tamanhoApp * (metadeDosApps - posicaoDoApp) -margemApps * (metadeDosApps - posicaoDoApp);
+        posicao += -tamanhoApp * (metadeDosApps - posicaoDoApp) - margemApps * (metadeDosApps - posicaoDoApp);
 
         return new Point(posicao, 12);
     }
-    private Panel CriacaoApp(Aplicativos appEmUso, Point localDoAplicativo){
-        PictureBox picAppIcon = new PictureBox{
+    private Panel CriacaoApp(Aplicativos appEmUso, Point localDoAplicativo)
+    {
+        PictureBox picAppIcon = new PictureBox
+        {
             Image = appEmUso.getIconeAplicativo(),
             Location = new Point(0, 0),
             BackColor = Color.Transparent,
@@ -539,7 +585,8 @@ public partial class Form3 : Form
         };
         PicArredondarBordas(picAppIcon, 30, 30, 30, 30);
         //
-        Label lblAppNome = new Label{
+        Label lblAppNome = new Label
+        {
             Font = new Font("Arial", 9F, FontStyle.Bold, GraphicsUnit.Point, 0),
             Anchor = AnchorStyles.Top,
             BackColor = Color.Transparent,
@@ -552,7 +599,8 @@ public partial class Form3 : Form
             TextAlign = ContentAlignment.MiddleCenter
         };
         //
-        Panel pnlBackground = new Panel{
+        Panel pnlBackground = new Panel
+        {
             Location = localDoAplicativo,
             Margin = new Padding(0),
             Name = "pnl_" + appEmUso.getNomeAplicativo() + ">" + appEmUso.getIdAplicativo(),
@@ -671,29 +719,29 @@ public partial class Form3 : Form
     }
     private void TransicaoAppsOcultos(object sender, EventArgs e)
     {
-        int meioDaTela = (this.Width/2) - picPuxarApps.Width/2;
-        if(appsOcultos)
+        int meioDaTela = (this.Width / 2) - picPuxarApps.Width / 2;
+        if (appsOcultos)
         {
             heightPnlApps += 10;
             pnlApps.Size = new Size(this.Width, heightPnlApps);
             picPuxarApps.Location = new Point(meioDaTela, pnlApps.Height);
-            if(pnlApps.Size.Height >= 150)
+            if (pnlApps.Size.Height >= 150)
             {
-                picPuxarApps.Image = Image.FromFile(Referencias.caminhoPicAppsHide);
+                picPuxarApps.Image = Properties.Resources.PicAppsHide;
                 pnlApps.Size = new Size(this.Width, 150);
                 picPuxarApps.Location = new Point(meioDaTela, pnlApps.Height);
                 appsOcultos = false;
                 pnlAppTransition.Stop();
             }
         }
-        else if(appsOcultos == false)
+        else if (appsOcultos == false)
         {
             heightPnlApps -= 10;
             pnlApps.Size = new Size(this.Width, heightPnlApps);
             picPuxarApps.Location = new Point(meioDaTela, pnlApps.Height);
-            if(pnlApps.Size.Height <= 0)
+            if (pnlApps.Size.Height <= 0)
             {
-                picPuxarApps.Image = Image.FromFile(Referencias.caminhoPicAppsShow);
+                picPuxarApps.Image = Properties.Resources.PicAppsShow;
                 pnlApps.Size = new Size(this.Width, 0);
                 picPuxarApps.Location = new Point(meioDaTela, pnlApps.Height);
                 appsOcultos = true;
@@ -703,17 +751,19 @@ public partial class Form3 : Form
     }
     private void BtnAlternarAppsOcultos(object sender, EventArgs e)
     {
-        pnlAppTransition.Start();      
-        heightPnlApps = pnlApps.Size.Height;  
+        pnlAppTransition.Start();
+        heightPnlApps = pnlApps.Size.Height;
     }
-    private void BtnAbrirAplicativos(object sender, EventArgs e){
+    private void BtnAbrirAplicativos(object sender, EventArgs e)
+    {
         PictureBox pic = sender as PictureBox;
         Label lbl = sender as Label;
         int id = 0;
         if (pic != null && pic.Name.Contains(">"))
         {
             id = int.Parse(pic.Name.Split(">")[1]);
-        } else
+        }
+        else
         if (lbl != null && lbl.Name.Contains(">"))
         {
             id = int.Parse(lbl.Name.Split(">")[1]);
@@ -775,7 +825,7 @@ public partial class Form3 : Form
     {
         Bitmap original = new Bitmap(imgData);
 
-        Bitmap vinheta = new Bitmap(Referencias.caminhoVinheta);
+        Bitmap vinheta = new Bitmap(Properties.Resources.Vinheta);
 
         Bitmap resultado = new Bitmap(pictureBox1.Width, pictureBox1.Height);
 
@@ -803,12 +853,13 @@ public partial class Form3 : Form
         }
         pictureBox1.Image = resultado;
     }
-    private void PicGIFAbrindoJogo(){
-        Image imgGIF = Image.FromFile(Referencias.caminhoGifCarregamento);
+    private void PicGIFAbrindoJogo()
+    {
+        Image imgGIF = Properties.Resources.Carregando;
         int widthPic = 400;
         int heightPic = 200;
-        int rightPic = this.Width/2 - widthPic/2;
-        int topPic = this.Height/2 - heightPic/2;
+        int rightPic = this.Width / 2 - widthPic / 2;
+        int topPic = this.Height / 2 - heightPic / 2;
         PictureBox picGIFCarregamento = new PictureBox
         {
             Image = imgGIF,
@@ -832,7 +883,7 @@ public partial class Form3 : Form
         if (controlesEncontrados[0] != null && pictureBox1.Controls.Contains(controlesEncontrados[0]))
         {
             pictureBox1.Controls.Remove(controlesEncontrados[0]);
-            
+
             controlesEncontrados[0].Dispose();
         }
     }
@@ -873,13 +924,16 @@ public partial class Form3 : Form
     // Tratamento Labels ---------------------------------------------------------------------------
     private void LblPosicionarCorretamente(string novoTexto, Label textToEdit)
     {
-        int antigaLargura = textToEdit.Width;
-        textToEdit.Text = novoTexto;
+        _syncContext.Post(_ =>
+        {
+            int antigaLargura = textToEdit.Width;
+            textToEdit.Text = novoTexto;
 
-        int novaLargura = textToEdit.Width;
-        int deslocamento = novaLargura - antigaLargura;
+            int novaLargura = textToEdit.Width;
+            int deslocamento = novaLargura - antigaLargura;
 
-        textToEdit.Left -= deslocamento;
+            textToEdit.Left -= deslocamento;
+        }, null);
     }
 
     // Data e hora --------------------------------------------------------------------------------
@@ -890,7 +944,7 @@ public partial class Form3 : Form
         LblPosicionarCorretamente(horario.ToString("HH:mm") + " hr", lblClockAtalho);
         LblPosicionarCorretamente(horario.ToString("D"), lblDataAtalhos);
 
-        temporizadorDoRelogio = new System.Timers.Timer(segundosParaProximoMinuto*1000);
+        temporizadorDoRelogio = new System.Timers.Timer(segundosParaProximoMinuto * 1000);
         temporizadorDoRelogio.Elapsed += AtualizarHorario;
         temporizadorDoRelogio.AutoReset = true;
         temporizadorDoRelogio.Enabled = true;
@@ -898,8 +952,9 @@ public partial class Form3 : Form
     private void AtualizarHorario(object sender, ElapsedEventArgs e)
     {
         DateTime horarioAtual = DateTime.Now;
-        
-        if(temporizadorDoRelogio.Interval != 60000){
+
+        if (temporizadorDoRelogio.Interval != 60000)
+        {
             AtualizarTemporizador(horarioAtual);
         }
 
@@ -907,11 +962,12 @@ public partial class Form3 : Form
 
         LblPosicionarCorretamente(horario.ToString("HH:mm") + " hr", lblClockAtalho);
     }
-    private void AtualizarTemporizador(DateTime horarioAtual){
-        if(!horario.ToString("HH:mm").Equals(horarioAtual.ToString("HH:mm")))
+    private void AtualizarTemporizador(DateTime horarioAtual)
+    {
+        if (!horario.ToString("HH:mm").Equals(horarioAtual.ToString("HH:mm")))
         {
             temporizadorDoRelogio.Enabled = false;
-            
+
             temporizadorDoRelogio = new System.Timers.Timer(60000);
             temporizadorDoRelogio.Elapsed += AtualizarHorario;
             temporizadorDoRelogio.AutoReset = true;

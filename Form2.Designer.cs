@@ -28,467 +28,648 @@ partial class Form2
     /// </summary>
     private void InitializeComponent()
     {
-        nomeGame = new TextBox();
-        caminhoGame = new TextBox();
-        nomedojogo = new Label();
-        caminhodojogo = new Label();
-        btnSalvar = new Button();
-        btnCancelar = new Button();
-        parametrodojogo = new Label();
-        parametroGame = new TextBox();
-        btnProcurarArq = new Button();
-        imgdoJogo = new Label();
-        imgGame = new TextBox();
-        btnImgLocal = new Button();
-        btnImgGoogle = new Button();
-        pictureImgGame = new PictureBox();
-        btnImportAtalho = new Button();
-        btnIconGoogle = new Button();
-        btnIconLocal = new Button();
-        iconDoJogo = new Label();
-        iconGame = new TextBox();
-        pictureIconGame = new PictureBox();
-        tabAbasCadastros = new TabControl();
-        tabPageCdtAtalho = new TabPage();
-        tabPageCdtApps = new TabPage();
-        btnURLExtApp = new Button();
-        btnAjudaApp = new Button();
-        lblNomeApp = new Label();
         picImgIconeApp = new PictureBox();
-        txtbxNomeApp = new TextBox();
+        picImgAtalho = new PictureBox();
+        btnImportAtalho = new Button();
+        picImgIconAtalho = new PictureBox();
+        titleBar = new Jasper.NthControls.TitleBarPersonalizada();
+        titleWindow = new Panel();
+        pnlCdtAplicativo = new Panel();
+        txtbxURLApp = new Jasper.NthControls.CustomTextbox();
+        lblImgIconeApp = new Label();
+        txtbxImgIconeApp = new Jasper.NthControls.CustomTextbox();
+        txtbxNomeApp = new Jasper.NthControls.CustomTextbox();
+        lblNomeApp = new Label();
+        btnAjudaApp = new Button();
         btnIconOnlineApp = new Button();
-        txtbxURLApp = new TextBox();
+        btnURLExtApp = new Button();
         btnIconLocalApp = new Button();
         lblURLApp = new Label();
-        lblImgIconeApp = new Label();
-        btnSalvarApp = new Button();
-        txtbxImgIconeApp = new TextBox();
         btnCancelarApp = new Button();
-        ((System.ComponentModel.ISupportInitialize)pictureImgGame).BeginInit();
-        ((System.ComponentModel.ISupportInitialize)pictureIconGame).BeginInit();
-        tabAbasCadastros.SuspendLayout();
-        tabPageCdtAtalho.SuspendLayout();
-        tabPageCdtApps.SuspendLayout();
+        btnSalvarApp = new Button();
+        panel1 = new Panel();
+        picPageAtalhos = new PictureBox();
+        btnPageAtalhos = new Button();
+        picPageAplicativos = new PictureBox();
+        btnPageAplicativo = new Button();
+        pnlCdtAtalho = new Panel();
+        txtbxParamAtalho = new Jasper.NthControls.CustomTextbox();
+        lblImgAtalho = new Label();
+        txtbxImgAtalho = new Jasper.NthControls.CustomTextbox();
+        lblIconAtalho = new Label();
+        txtbxImgIconAtalho = new Jasper.NthControls.CustomTextbox();
+        btnImgIconAtalhoOnline = new Button();
+        btnImgIconAtalhoLocal = new Button();
+        txtbxPathAtalho = new Jasper.NthControls.CustomTextbox();
+        txtbxNomeAtalho = new Jasper.NthControls.CustomTextbox();
+        lblNomeAtalho = new Label();
+        btnImgAtalhoOnline = new Button();
+        btnProcurarArq = new Button();
+        lblArtistaMusica = new Label();
+        btnImgAtalhoLocal = new Button();
+        lblPathAtalho = new Label();
+        btnCancelarAtalho = new Button();
+        btnSalvarAtalho = new Button();
         ((System.ComponentModel.ISupportInitialize)picImgIconeApp).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)picImgAtalho).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)picImgIconAtalho).BeginInit();
+        titleWindow.SuspendLayout();
+        pnlCdtAplicativo.SuspendLayout();
+        panel1.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)picPageAtalhos).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)picPageAplicativos).BeginInit();
+        pnlCdtAtalho.SuspendLayout();
         SuspendLayout();
-        // 
-        // nomeGame
-        // 
-        nomeGame.Location = new Point(19, 41);
-        nomeGame.Name = "nomeGame";
-        nomeGame.PlaceholderText = "Nome do Jogo";
-        nomeGame.Size = new Size(629, 23);
-        nomeGame.TabIndex = 0;
-        // 
-        // caminhoGame
-        // 
-        caminhoGame.Location = new Point(19, 100);
-        caminhoGame.Name = "caminhoGame";
-        caminhoGame.PlaceholderText = "Caminho";
-        caminhoGame.Size = new Size(548, 23);
-        caminhoGame.TabIndex = 1;
-        // 
-        // nomedojogo
-        // 
-        nomedojogo.AutoSize = true;
-        nomedojogo.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-        nomedojogo.Location = new Point(19, 8);
-        nomedojogo.Name = "nomedojogo";
-        nomedojogo.Size = new Size(159, 30);
-        nomedojogo.TabIndex = 2;
-        nomedojogo.Text = "Nome do Jogo";
-        // 
-        // caminhodojogo
-        // 
-        caminhodojogo.AutoSize = true;
-        caminhodojogo.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-        caminhodojogo.Location = new Point(19, 67);
-        caminhodojogo.Name = "caminhodojogo";
-        caminhodojogo.Size = new Size(187, 30);
-        caminhodojogo.TabIndex = 3;
-        caminhodojogo.Text = "Caminho do Jogo";
-        // 
-        // btnSalvar
-        // 
-        btnSalvar.Location = new Point(404, 460);
-        btnSalvar.Name = "btnSalvar";
-        btnSalvar.Size = new Size(119, 41);
-        btnSalvar.TabIndex = 11;
-        btnSalvar.Text = "Salvar";
-        btnSalvar.UseVisualStyleBackColor = true;
-        // 
-        // btnCancelar
-        // 
-        btnCancelar.Location = new Point(529, 460);
-        btnCancelar.Name = "btnCancelar";
-        btnCancelar.Size = new Size(119, 41);
-        btnCancelar.TabIndex = 12;
-        btnCancelar.Text = "Cancelar";
-        btnCancelar.UseVisualStyleBackColor = true;
-        // 
-        // parametrodojogo
-        // 
-        parametrodojogo.AutoSize = true;
-        parametrodojogo.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-        parametrodojogo.Location = new Point(17, 125);
-        parametrodojogo.Name = "parametrodojogo";
-        parametrodojogo.Size = new Size(245, 30);
-        parametrodojogo.TabIndex = 7;
-        parametrodojogo.Text = "Parametros para o Jogo";
-        // 
-        // parametroGame
-        // 
-        parametroGame.Location = new Point(19, 158);
-        parametroGame.Name = "parametroGame";
-        parametroGame.PlaceholderText = "parametros (opcional)";
-        parametroGame.Size = new Size(629, 23);
-        parametroGame.TabIndex = 3;
-        // 
-        // btnProcurarArq
-        // 
-        btnProcurarArq.Location = new Point(573, 100);
-        btnProcurarArq.Name = "btnProcurarArq";
-        btnProcurarArq.Size = new Size(75, 23);
-        btnProcurarArq.TabIndex = 2;
-        btnProcurarArq.Text = "Procurar";
-        btnProcurarArq.UseVisualStyleBackColor = true;
-        // 
-        // imgdoJogo
-        // 
-        imgdoJogo.AutoSize = true;
-        imgdoJogo.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-        imgdoJogo.Location = new Point(19, 183);
-        imgdoJogo.Name = "imgdoJogo";
-        imgdoJogo.Size = new Size(211, 30);
-        imgdoJogo.TabIndex = 10;
-        imgdoJogo.Text = "Imagem de exibição";
-        // 
-        // imgGame
-        // 
-        imgGame.Location = new Point(19, 216);
-        imgGame.Name = "imgGame";
-        imgGame.PlaceholderText = "Imagem (URL da internet ou caminho local)";
-        imgGame.Size = new Size(379, 23);
-        imgGame.TabIndex = 4;
-        // 
-        // btnImgLocal
-        // 
-        btnImgLocal.Location = new Point(529, 215);
-        btnImgLocal.Name = "btnImgLocal";
-        btnImgLocal.Size = new Size(119, 23);
-        btnImgLocal.TabIndex = 6;
-        btnImgLocal.Text = "Procurar";
-        btnImgLocal.UseVisualStyleBackColor = true;
-        // 
-        // btnImgGoogle
-        // 
-        btnImgGoogle.Location = new Point(404, 215);
-        btnImgGoogle.Name = "btnImgGoogle";
-        btnImgGoogle.Size = new Size(119, 23);
-        btnImgGoogle.TabIndex = 5;
-        btnImgGoogle.Text = "Pesquisar online";
-        btnImgGoogle.UseVisualStyleBackColor = true;
-        // 
-        // pictureImgGame
-        // 
-        pictureImgGame.Location = new Point(19, 308);
-        pictureImgGame.Name = "pictureImgGame";
-        pictureImgGame.Size = new Size(344, 193);
-        pictureImgGame.SizeMode = PictureBoxSizeMode.Zoom;
-        pictureImgGame.TabIndex = 13;
-        pictureImgGame.TabStop = false;
-        // 
-        // btnImportAtalho
-        // 
-        btnImportAtalho.Location = new Point(404, 420);
-        btnImportAtalho.Name = "btnImportAtalho";
-        btnImportAtalho.Size = new Size(244, 34);
-        btnImportAtalho.TabIndex = 10;
-        btnImportAtalho.Text = "Importar atalho";
-        btnImportAtalho.UseVisualStyleBackColor = true;
-        // 
-        // btnIconGoogle
-        // 
-        btnIconGoogle.Location = new Point(404, 273);
-        btnIconGoogle.Name = "btnIconGoogle";
-        btnIconGoogle.Size = new Size(119, 23);
-        btnIconGoogle.TabIndex = 8;
-        btnIconGoogle.Text = "Pesquisar online";
-        btnIconGoogle.UseVisualStyleBackColor = true;
-        // 
-        // btnIconLocal
-        // 
-        btnIconLocal.Location = new Point(529, 273);
-        btnIconLocal.Name = "btnIconLocal";
-        btnIconLocal.Size = new Size(119, 23);
-        btnIconLocal.TabIndex = 9;
-        btnIconLocal.Text = "Procurar";
-        btnIconLocal.UseVisualStyleBackColor = true;
-        // 
-        // iconDoJogo
-        // 
-        iconDoJogo.AutoSize = true;
-        iconDoJogo.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-        iconDoJogo.Location = new Point(19, 241);
-        iconDoJogo.Name = "iconDoJogo";
-        iconDoJogo.Size = new Size(184, 30);
-        iconDoJogo.TabIndex = 16;
-        iconDoJogo.Text = "Imagem do icone";
-        // 
-        // iconGame
-        // 
-        iconGame.Location = new Point(19, 274);
-        iconGame.Name = "iconGame";
-        iconGame.PlaceholderText = "Icone (automático do executavel [low scale])";
-        iconGame.Size = new Size(379, 23);
-        iconGame.TabIndex = 7;
-        // 
-        // pictureIconGame
-        // 
-        pictureIconGame.Location = new Point(548, 308);
-        pictureIconGame.Name = "pictureIconGame";
-        pictureIconGame.Size = new Size(100, 100);
-        pictureIconGame.SizeMode = PictureBoxSizeMode.Zoom;
-        pictureIconGame.TabIndex = 19;
-        pictureIconGame.TabStop = false;
-        // 
-        // tabAbasCadastros
-        // 
-        tabAbasCadastros.Controls.Add(tabPageCdtAtalho);
-        tabAbasCadastros.Controls.Add(tabPageCdtApps);
-        tabAbasCadastros.Dock = DockStyle.Fill;
-        tabAbasCadastros.Location = new Point(0, 0);
-        tabAbasCadastros.Name = "tabAbasCadastros";
-        tabAbasCadastros.SelectedIndex = 0;
-        tabAbasCadastros.Size = new Size(677, 553);
-        tabAbasCadastros.TabIndex = 20;
-        // 
-        // tabPageCdtAtalho
-        // 
-        tabPageCdtAtalho.Controls.Add(nomedojogo);
-        tabPageCdtAtalho.Controls.Add(pictureIconGame);
-        tabPageCdtAtalho.Controls.Add(nomeGame);
-        tabPageCdtAtalho.Controls.Add(btnIconGoogle);
-        tabPageCdtAtalho.Controls.Add(caminhoGame);
-        tabPageCdtAtalho.Controls.Add(btnIconLocal);
-        tabPageCdtAtalho.Controls.Add(caminhodojogo);
-        tabPageCdtAtalho.Controls.Add(iconDoJogo);
-        tabPageCdtAtalho.Controls.Add(btnSalvar);
-        tabPageCdtAtalho.Controls.Add(iconGame);
-        tabPageCdtAtalho.Controls.Add(btnCancelar);
-        tabPageCdtAtalho.Controls.Add(btnImportAtalho);
-        tabPageCdtAtalho.Controls.Add(parametroGame);
-        tabPageCdtAtalho.Controls.Add(pictureImgGame);
-        tabPageCdtAtalho.Controls.Add(parametrodojogo);
-        tabPageCdtAtalho.Controls.Add(btnImgGoogle);
-        tabPageCdtAtalho.Controls.Add(btnProcurarArq);
-        tabPageCdtAtalho.Controls.Add(btnImgLocal);
-        tabPageCdtAtalho.Controls.Add(imgGame);
-        tabPageCdtAtalho.Controls.Add(imgdoJogo);
-        tabPageCdtAtalho.Location = new Point(4, 24);
-        tabPageCdtAtalho.Name = "tabPageCdtAtalho";
-        tabPageCdtAtalho.Padding = new Padding(3);
-        tabPageCdtAtalho.Size = new Size(669, 525);
-        tabPageCdtAtalho.TabIndex = 0;
-        tabPageCdtAtalho.Text = "Atalhos";
-        tabPageCdtAtalho.UseVisualStyleBackColor = true;
-        // 
-        // tabPageCdtApps
-        // 
-        tabPageCdtApps.Controls.Add(btnURLExtApp);
-        tabPageCdtApps.Controls.Add(btnAjudaApp);
-        tabPageCdtApps.Controls.Add(lblNomeApp);
-        tabPageCdtApps.Controls.Add(picImgIconeApp);
-        tabPageCdtApps.Controls.Add(txtbxNomeApp);
-        tabPageCdtApps.Controls.Add(btnIconOnlineApp);
-        tabPageCdtApps.Controls.Add(txtbxURLApp);
-        tabPageCdtApps.Controls.Add(btnIconLocalApp);
-        tabPageCdtApps.Controls.Add(lblURLApp);
-        tabPageCdtApps.Controls.Add(lblImgIconeApp);
-        tabPageCdtApps.Controls.Add(btnSalvarApp);
-        tabPageCdtApps.Controls.Add(txtbxImgIconeApp);
-        tabPageCdtApps.Controls.Add(btnCancelarApp);
-        tabPageCdtApps.Location = new Point(4, 24);
-        tabPageCdtApps.Name = "tabPageCdtApps";
-        tabPageCdtApps.Padding = new Padding(3);
-        tabPageCdtApps.Size = new Size(669, 525);
-        tabPageCdtApps.TabIndex = 1;
-        tabPageCdtApps.Text = "Aplicativos";
-        tabPageCdtApps.UseVisualStyleBackColor = true;
-        // 
-        // btnURLExtApp
-        // 
-        btnURLExtApp.Location = new Point(528, 99);
-        btnURLExtApp.Name = "btnURLExtApp";
-        btnURLExtApp.Size = new Size(119, 23);
-        btnURLExtApp.TabIndex = 2;
-        btnURLExtApp.Text = "Procurar Codigo";
-        btnURLExtApp.UseVisualStyleBackColor = true;
-        // 
-        // btnAjudaApp
-        // 
-        btnAjudaApp.Location = new Point(405, 421);
-        btnAjudaApp.Name = "btnAjudaApp";
-        btnAjudaApp.Size = new Size(244, 41);
-        btnAjudaApp.TabIndex = 6;
-        btnAjudaApp.Text = "Ajuda";
-        btnAjudaApp.UseVisualStyleBackColor = true;
-        // 
-        // lblNomeApp
-        // 
-        lblNomeApp.AutoSize = true;
-        lblNomeApp.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-        lblNomeApp.Location = new Point(18, 7);
-        lblNomeApp.Name = "lblNomeApp";
-        lblNomeApp.Size = new Size(210, 30);
-        lblNomeApp.TabIndex = 22;
-        lblNomeApp.Text = "Nome do Aplicativo";
         // 
         // picImgIconeApp
         // 
-        picImgIconeApp.Location = new Point(18, 186);
+        picImgIconeApp.Location = new Point(13, 192);
         picImgIconeApp.Name = "picImgIconeApp";
-        picImgIconeApp.Size = new Size(323, 323);
+        picImgIconeApp.Size = new Size(325, 308);
         picImgIconeApp.SizeMode = PictureBoxSizeMode.Zoom;
         picImgIconeApp.TabIndex = 32;
         picImgIconeApp.TabStop = false;
         // 
-        // txtbxNomeApp
+        // picImgAtalho
         // 
-        txtbxNomeApp.Location = new Point(18, 40);
-        txtbxNomeApp.Name = "txtbxNomeApp";
-        txtbxNomeApp.PlaceholderText = "Nome do Aplicativo";
-        txtbxNomeApp.Size = new Size(629, 23);
-        txtbxNomeApp.TabIndex = 0;
+        picImgAtalho.Location = new Point(13, 307);
+        picImgAtalho.Name = "picImgAtalho";
+        picImgAtalho.Size = new Size(344, 193);
+        picImgAtalho.SizeMode = PictureBoxSizeMode.Zoom;
+        picImgAtalho.TabIndex = 13;
+        picImgAtalho.TabStop = false;
         // 
-        // btnIconOnlineApp
+        // btnImportAtalho
         // 
-        btnIconOnlineApp.Location = new Point(403, 156);
-        btnIconOnlineApp.Name = "btnIconOnlineApp";
-        btnIconOnlineApp.Size = new Size(119, 23);
-        btnIconOnlineApp.TabIndex = 4;
-        btnIconOnlineApp.Text = "Pesquisar online";
-        btnIconOnlineApp.UseVisualStyleBackColor = true;
+        btnImportAtalho.BackColor = Color.FromArgb(59, 58, 58);
+        btnImportAtalho.FlatStyle = FlatStyle.Flat;
+        btnImportAtalho.Location = new Point(411, 419);
+        btnImportAtalho.Name = "btnImportAtalho";
+        btnImportAtalho.Size = new Size(244, 34);
+        btnImportAtalho.TabIndex = 10;
+        btnImportAtalho.Text = "Importar atalho";
+        btnImportAtalho.UseVisualStyleBackColor = false;
+        // 
+        // picImgIconAtalho
+        // 
+        picImgIconAtalho.Location = new Point(501, 32);
+        picImgIconAtalho.Name = "picImgIconAtalho";
+        picImgIconAtalho.Size = new Size(154, 154);
+        picImgIconAtalho.SizeMode = PictureBoxSizeMode.Zoom;
+        picImgIconAtalho.TabIndex = 19;
+        picImgIconAtalho.TabStop = false;
+        // 
+        // titleBar
+        // 
+        titleBar.BackColor = Color.Transparent;
+        titleBar.Fechar = false;
+        titleBar.LabelPosition = 0;
+        titleBar.Location = new Point(8, 8);
+        titleBar.Margin = new Padding(0);
+        titleBar.Maximizar = true;
+        titleBar.Minimizar = true;
+        titleBar.Name = "titleBar";
+        titleBar.Size = new Size(678, 34);
+        titleBar.TabIndex = 21;
+        titleBar.Title = "PlayOS - Cadastro";
+        titleBar.WithFechar = true;
+        titleBar.WithMaximizar = false;
+        titleBar.WithMinimizar = false;
+        // 
+        // titleWindow
+        // 
+        titleWindow.BackColor = Color.FromArgb(27, 28, 29);
+        titleWindow.Controls.Add(pnlCdtAplicativo);
+        titleWindow.Controls.Add(panel1);
+        titleWindow.Controls.Add(pnlCdtAtalho);
+        titleWindow.Location = new Point(8, 42);
+        titleWindow.Margin = new Padding(0);
+        titleWindow.Name = "titleWindow";
+        titleWindow.Size = new Size(678, 563);
+        titleWindow.TabIndex = 22;
+        // 
+        // pnlCdtAplicativo
+        // 
+        pnlCdtAplicativo.BackColor = Color.FromArgb(44, 44, 44);
+        pnlCdtAplicativo.Controls.Add(txtbxURLApp);
+        pnlCdtAplicativo.Controls.Add(picImgIconeApp);
+        pnlCdtAplicativo.Controls.Add(lblImgIconeApp);
+        pnlCdtAplicativo.Controls.Add(txtbxImgIconeApp);
+        pnlCdtAplicativo.Controls.Add(txtbxNomeApp);
+        pnlCdtAplicativo.Controls.Add(lblNomeApp);
+        pnlCdtAplicativo.Controls.Add(btnAjudaApp);
+        pnlCdtAplicativo.Controls.Add(btnIconOnlineApp);
+        pnlCdtAplicativo.Controls.Add(btnURLExtApp);
+        pnlCdtAplicativo.Controls.Add(btnIconLocalApp);
+        pnlCdtAplicativo.Controls.Add(lblURLApp);
+        pnlCdtAplicativo.Controls.Add(btnCancelarApp);
+        pnlCdtAplicativo.Controls.Add(btnSalvarApp);
+        pnlCdtAplicativo.Location = new Point(4, 48);
+        pnlCdtAplicativo.Margin = new Padding(3, 0, 3, 3);
+        pnlCdtAplicativo.Name = "pnlCdtAplicativo";
+        pnlCdtAplicativo.Size = new Size(669, 0);
+        pnlCdtAplicativo.TabIndex = 26;
         // 
         // txtbxURLApp
         // 
-        txtbxURLApp.Location = new Point(18, 99);
+        txtbxURLApp.backColor = Color.FromArgb(59, 58, 58);
+        txtbxURLApp.LblPlaceholder = "URL ou URI para abrir app";
+        txtbxURLApp.Location = new Point(13, 92);
+        txtbxURLApp.Multiline = false;
         txtbxURLApp.Name = "txtbxURLApp";
-        txtbxURLApp.PlaceholderText = "URL ou URI para abrir app";
-        txtbxURLApp.Size = new Size(504, 23);
-        txtbxURLApp.TabIndex = 1;
-        // 
-        // btnIconLocalApp
-        // 
-        btnIconLocalApp.Location = new Point(528, 156);
-        btnIconLocalApp.Name = "btnIconLocalApp";
-        btnIconLocalApp.Size = new Size(119, 23);
-        btnIconLocalApp.TabIndex = 5;
-        btnIconLocalApp.Text = "Procurar";
-        btnIconLocalApp.UseVisualStyleBackColor = true;
-        // 
-        // lblURLApp
-        // 
-        lblURLApp.AutoSize = true;
-        lblURLApp.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-        lblURLApp.Location = new Point(18, 66);
-        lblURLApp.Name = "lblURLApp";
-        lblURLApp.Size = new Size(190, 30);
-        lblURLApp.TabIndex = 23;
-        lblURLApp.Text = "URL do Aplicativo";
+        txtbxURLApp.Password = false;
+        txtbxURLApp.Size = new Size(516, 36);
+        txtbxURLApp.TabIndex = 18;
+        txtbxURLApp.textColor = Color.DimGray;
+        txtbxURLApp.Texto = "";
         // 
         // lblImgIconeApp
         // 
         lblImgIconeApp.AutoSize = true;
         lblImgIconeApp.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-        lblImgIconeApp.Location = new Point(18, 124);
+        lblImgIconeApp.ForeColor = Color.Silver;
+        lblImgIconeApp.Location = new Point(11, 123);
         lblImgIconeApp.Name = "lblImgIconeApp";
         lblImgIconeApp.Size = new Size(227, 30);
-        lblImgIconeApp.TabIndex = 29;
+        lblImgIconeApp.TabIndex = 7;
         lblImgIconeApp.Text = "Imagem do icone app";
-        // 
-        // btnSalvarApp
-        // 
-        btnSalvarApp.Location = new Point(405, 468);
-        btnSalvarApp.Name = "btnSalvarApp";
-        btnSalvarApp.Size = new Size(119, 41);
-        btnSalvarApp.TabIndex = 7;
-        btnSalvarApp.Text = "Salvar";
-        btnSalvarApp.UseVisualStyleBackColor = true;
         // 
         // txtbxImgIconeApp
         // 
-        txtbxImgIconeApp.Location = new Point(18, 157);
+        txtbxImgIconeApp.backColor = Color.FromArgb(59, 58, 58);
+        txtbxImgIconeApp.LblPlaceholder = "Icone";
+        txtbxImgIconeApp.Location = new Point(13, 150);
+        txtbxImgIconeApp.Multiline = false;
         txtbxImgIconeApp.Name = "txtbxImgIconeApp";
-        txtbxImgIconeApp.PlaceholderText = "Icone";
-        txtbxImgIconeApp.Size = new Size(379, 23);
-        txtbxImgIconeApp.TabIndex = 3;
+        txtbxImgIconeApp.Password = false;
+        txtbxImgIconeApp.Size = new Size(393, 36);
+        txtbxImgIconeApp.TabIndex = 20;
+        txtbxImgIconeApp.textColor = Color.DimGray;
+        txtbxImgIconeApp.Texto = "";
+        // 
+        // txtbxNomeApp
+        // 
+        txtbxNomeApp.backColor = Color.FromArgb(59, 58, 58);
+        txtbxNomeApp.LblPlaceholder = "";
+        txtbxNomeApp.Location = new Point(13, 32);
+        txtbxNomeApp.Multiline = false;
+        txtbxNomeApp.Name = "txtbxNomeApp";
+        txtbxNomeApp.Password = false;
+        txtbxNomeApp.Size = new Size(641, 36);
+        txtbxNomeApp.TabIndex = 17;
+        txtbxNomeApp.textColor = Color.DimGray;
+        txtbxNomeApp.Texto = "";
+        // 
+        // lblNomeApp
+        // 
+        lblNomeApp.AutoSize = true;
+        lblNomeApp.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+        lblNomeApp.ForeColor = Color.Silver;
+        lblNomeApp.Location = new Point(13, 6);
+        lblNomeApp.Name = "lblNomeApp";
+        lblNomeApp.Size = new Size(210, 30);
+        lblNomeApp.TabIndex = 2;
+        lblNomeApp.Text = "Nome do Aplicativo";
+        // 
+        // btnAjudaApp
+        // 
+        btnAjudaApp.BackColor = Color.FromArgb(59, 58, 58);
+        btnAjudaApp.FlatStyle = FlatStyle.Flat;
+        btnAjudaApp.Location = new Point(411, 419);
+        btnAjudaApp.Name = "btnAjudaApp";
+        btnAjudaApp.Size = new Size(244, 34);
+        btnAjudaApp.TabIndex = 10;
+        btnAjudaApp.Text = "Importar atalho";
+        btnAjudaApp.UseVisualStyleBackColor = false;
+        // 
+        // btnIconOnlineApp
+        // 
+        btnIconOnlineApp.BackColor = Color.FromArgb(59, 58, 58);
+        btnIconOnlineApp.FlatAppearance.BorderSize = 0;
+        btnIconOnlineApp.FlatStyle = FlatStyle.Flat;
+        btnIconOnlineApp.Location = new Point(411, 158);
+        btnIconOnlineApp.Name = "btnIconOnlineApp";
+        btnIconOnlineApp.Size = new Size(119, 25);
+        btnIconOnlineApp.TabIndex = 8;
+        btnIconOnlineApp.Text = "Pesquisar online";
+        btnIconOnlineApp.UseVisualStyleBackColor = false;
+        // 
+        // btnURLExtApp
+        // 
+        btnURLExtApp.BackColor = Color.FromArgb(59, 58, 58);
+        btnURLExtApp.FlatAppearance.BorderSize = 0;
+        btnURLExtApp.FlatStyle = FlatStyle.Flat;
+        btnURLExtApp.Location = new Point(535, 100);
+        btnURLExtApp.Name = "btnURLExtApp";
+        btnURLExtApp.Size = new Size(119, 25);
+        btnURLExtApp.TabIndex = 5;
+        btnURLExtApp.Text = "Procurar Código";
+        btnURLExtApp.UseVisualStyleBackColor = false;
+        // 
+        // btnIconLocalApp
+        // 
+        btnIconLocalApp.BackColor = Color.FromArgb(59, 58, 58);
+        btnIconLocalApp.FlatAppearance.BorderSize = 0;
+        btnIconLocalApp.FlatStyle = FlatStyle.Flat;
+        btnIconLocalApp.Location = new Point(535, 158);
+        btnIconLocalApp.Name = "btnIconLocalApp";
+        btnIconLocalApp.Size = new Size(119, 25);
+        btnIconLocalApp.TabIndex = 9;
+        btnIconLocalApp.Text = "Procurar";
+        btnIconLocalApp.UseVisualStyleBackColor = false;
+        // 
+        // lblURLApp
+        // 
+        lblURLApp.AutoSize = true;
+        lblURLApp.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+        lblURLApp.ForeColor = Color.Silver;
+        lblURLApp.Location = new Point(13, 65);
+        lblURLApp.Name = "lblURLApp";
+        lblURLApp.Size = new Size(190, 30);
+        lblURLApp.TabIndex = 3;
+        lblURLApp.Text = "URL do Aplicativo";
         // 
         // btnCancelarApp
         // 
-        btnCancelarApp.Location = new Point(530, 468);
+        btnCancelarApp.BackColor = Color.FromArgb(59, 58, 58);
+        btnCancelarApp.FlatStyle = FlatStyle.Flat;
+        btnCancelarApp.Location = new Point(536, 459);
         btnCancelarApp.Name = "btnCancelarApp";
         btnCancelarApp.Size = new Size(119, 41);
-        btnCancelarApp.TabIndex = 8;
+        btnCancelarApp.TabIndex = 12;
         btnCancelarApp.Text = "Cancelar";
-        btnCancelarApp.UseVisualStyleBackColor = true;
+        btnCancelarApp.UseVisualStyleBackColor = false;
+        // 
+        // btnSalvarApp
+        // 
+        btnSalvarApp.BackColor = Color.FromArgb(59, 58, 58);
+        btnSalvarApp.FlatStyle = FlatStyle.Flat;
+        btnSalvarApp.Location = new Point(411, 459);
+        btnSalvarApp.Name = "btnSalvarApp";
+        btnSalvarApp.Size = new Size(119, 41);
+        btnSalvarApp.TabIndex = 11;
+        btnSalvarApp.Text = "Salvar";
+        btnSalvarApp.UseVisualStyleBackColor = false;
+        // 
+        // panel1
+        // 
+        panel1.Controls.Add(picPageAtalhos);
+        panel1.Controls.Add(btnPageAtalhos);
+        panel1.Controls.Add(picPageAplicativos);
+        panel1.Controls.Add(btnPageAplicativo);
+        panel1.Location = new Point(4, 12);
+        panel1.Name = "panel1";
+        panel1.Size = new Size(669, 30);
+        panel1.TabIndex = 26;
+        // 
+        // picPageAtalhos
+        // 
+        picPageAtalhos.Location = new Point(5, 0);
+        picPageAtalhos.Margin = new Padding(3, 3, 0, 3);
+        picPageAtalhos.Name = "picPageAtalhos";
+        picPageAtalhos.Size = new Size(30, 30);
+        picPageAtalhos.TabIndex = 26;
+        picPageAtalhos.TabStop = false;
+        // 
+        // btnPageAtalhos
+        // 
+        btnPageAtalhos.BackColor = Color.FromArgb(44, 44, 44);
+        btnPageAtalhos.FlatAppearance.BorderSize = 0;
+        btnPageAtalhos.FlatStyle = FlatStyle.Flat;
+        btnPageAtalhos.ForeColor = Color.Silver;
+        btnPageAtalhos.Location = new Point(35, 0);
+        btnPageAtalhos.Margin = new Padding(0, 3, 0, 3);
+        btnPageAtalhos.Name = "btnPageAtalhos";
+        btnPageAtalhos.Size = new Size(75, 30);
+        btnPageAtalhos.TabIndex = 25;
+        btnPageAtalhos.Text = "Atalhos";
+        btnPageAtalhos.UseVisualStyleBackColor = false;
+        // 
+        // picPageAplicativos
+        // 
+        picPageAplicativos.Location = new Point(113, 0);
+        picPageAplicativos.Margin = new Padding(3, 3, 0, 3);
+        picPageAplicativos.Name = "picPageAplicativos";
+        picPageAplicativos.Size = new Size(30, 30);
+        picPageAplicativos.TabIndex = 28;
+        picPageAplicativos.TabStop = false;
+        // 
+        // btnPageAplicativo
+        // 
+        btnPageAplicativo.BackColor = Color.FromArgb(44, 44, 44);
+        btnPageAplicativo.FlatAppearance.BorderSize = 0;
+        btnPageAplicativo.FlatStyle = FlatStyle.Flat;
+        btnPageAplicativo.ForeColor = Color.Silver;
+        btnPageAplicativo.Location = new Point(143, 0);
+        btnPageAplicativo.Margin = new Padding(0, 3, 0, 3);
+        btnPageAplicativo.Name = "btnPageAplicativo";
+        btnPageAplicativo.Size = new Size(75, 30);
+        btnPageAplicativo.TabIndex = 27;
+        btnPageAplicativo.Text = "Aplicativo";
+        btnPageAplicativo.UseVisualStyleBackColor = false;
+        // 
+        // pnlCdtAtalho
+        // 
+        pnlCdtAtalho.BackColor = Color.FromArgb(44, 44, 44);
+        pnlCdtAtalho.Controls.Add(txtbxParamAtalho);
+        pnlCdtAtalho.Controls.Add(lblImgAtalho);
+        pnlCdtAtalho.Controls.Add(txtbxImgAtalho);
+        pnlCdtAtalho.Controls.Add(lblIconAtalho);
+        pnlCdtAtalho.Controls.Add(txtbxImgIconAtalho);
+        pnlCdtAtalho.Controls.Add(btnImgIconAtalhoOnline);
+        pnlCdtAtalho.Controls.Add(btnImgIconAtalhoLocal);
+        pnlCdtAtalho.Controls.Add(picImgIconAtalho);
+        pnlCdtAtalho.Controls.Add(picImgAtalho);
+        pnlCdtAtalho.Controls.Add(txtbxPathAtalho);
+        pnlCdtAtalho.Controls.Add(txtbxNomeAtalho);
+        pnlCdtAtalho.Controls.Add(lblNomeAtalho);
+        pnlCdtAtalho.Controls.Add(btnImportAtalho);
+        pnlCdtAtalho.Controls.Add(btnImgAtalhoOnline);
+        pnlCdtAtalho.Controls.Add(btnProcurarArq);
+        pnlCdtAtalho.Controls.Add(lblArtistaMusica);
+        pnlCdtAtalho.Controls.Add(btnImgAtalhoLocal);
+        pnlCdtAtalho.Controls.Add(lblPathAtalho);
+        pnlCdtAtalho.Controls.Add(btnCancelarAtalho);
+        pnlCdtAtalho.Controls.Add(btnSalvarAtalho);
+        pnlCdtAtalho.Location = new Point(4, 48);
+        pnlCdtAtalho.Margin = new Padding(3, 0, 3, 3);
+        pnlCdtAtalho.Name = "pnlCdtAtalho";
+        pnlCdtAtalho.Size = new Size(669, 511);
+        pnlCdtAtalho.TabIndex = 25;
+        // 
+        // txtbxParamAtalho
+        // 
+        txtbxParamAtalho.backColor = Color.FromArgb(59, 58, 58);
+        txtbxParamAtalho.LblPlaceholder = "Parametros (opcional)";
+        txtbxParamAtalho.Location = new Point(13, 150);
+        txtbxParamAtalho.Multiline = false;
+        txtbxParamAtalho.Name = "txtbxParamAtalho";
+        txtbxParamAtalho.Password = false;
+        txtbxParamAtalho.Size = new Size(482, 36);
+        txtbxParamAtalho.TabIndex = 20;
+        txtbxParamAtalho.textColor = Color.DimGray;
+        txtbxParamAtalho.Texto = "";
+        // 
+        // lblImgAtalho
+        // 
+        lblImgAtalho.AutoSize = true;
+        lblImgAtalho.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+        lblImgAtalho.ForeColor = Color.Silver;
+        lblImgAtalho.Location = new Point(13, 181);
+        lblImgAtalho.Name = "lblImgAtalho";
+        lblImgAtalho.Size = new Size(193, 30);
+        lblImgAtalho.TabIndex = 16;
+        lblImgAtalho.Text = "Imagem do atalho";
+        // 
+        // txtbxImgAtalho
+        // 
+        txtbxImgAtalho.backColor = Color.FromArgb(59, 58, 58);
+        txtbxImgAtalho.LblPlaceholder = "Imagem de exibição";
+        txtbxImgAtalho.Location = new Point(13, 208);
+        txtbxImgAtalho.Multiline = false;
+        txtbxImgAtalho.Name = "txtbxImgAtalho";
+        txtbxImgAtalho.Password = false;
+        txtbxImgAtalho.Size = new Size(393, 36);
+        txtbxImgAtalho.TabIndex = 19;
+        txtbxImgAtalho.textColor = Color.DimGray;
+        txtbxImgAtalho.Texto = "";
+        // 
+        // lblIconAtalho
+        // 
+        lblIconAtalho.AutoSize = true;
+        lblIconAtalho.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+        lblIconAtalho.ForeColor = Color.Silver;
+        lblIconAtalho.Location = new Point(13, 238);
+        lblIconAtalho.Name = "lblIconAtalho";
+        lblIconAtalho.Size = new Size(167, 30);
+        lblIconAtalho.TabIndex = 23;
+        lblIconAtalho.Text = "Icone do atalho";
+        // 
+        // txtbxImgIconAtalho
+        // 
+        txtbxImgIconAtalho.backColor = Color.FromArgb(59, 58, 58);
+        txtbxImgIconAtalho.LblPlaceholder = "Icone do jogo";
+        txtbxImgIconAtalho.Location = new Point(13, 265);
+        txtbxImgIconAtalho.Multiline = false;
+        txtbxImgIconAtalho.Name = "txtbxImgIconAtalho";
+        txtbxImgIconAtalho.Password = false;
+        txtbxImgIconAtalho.Size = new Size(393, 36);
+        txtbxImgIconAtalho.TabIndex = 24;
+        txtbxImgIconAtalho.textColor = Color.DimGray;
+        txtbxImgIconAtalho.Texto = "";
+        // 
+        // btnImgIconAtalhoOnline
+        // 
+        btnImgIconAtalhoOnline.BackColor = Color.FromArgb(59, 58, 58);
+        btnImgIconAtalhoOnline.FlatAppearance.BorderSize = 0;
+        btnImgIconAtalhoOnline.FlatStyle = FlatStyle.Flat;
+        btnImgIconAtalhoOnline.Location = new Point(412, 273);
+        btnImgIconAtalhoOnline.Name = "btnImgIconAtalhoOnline";
+        btnImgIconAtalhoOnline.Size = new Size(119, 25);
+        btnImgIconAtalhoOnline.TabIndex = 21;
+        btnImgIconAtalhoOnline.Text = "Pesquisar online";
+        btnImgIconAtalhoOnline.UseVisualStyleBackColor = false;
+        // 
+        // btnImgIconAtalhoLocal
+        // 
+        btnImgIconAtalhoLocal.BackColor = Color.FromArgb(59, 58, 58);
+        btnImgIconAtalhoLocal.FlatAppearance.BorderSize = 0;
+        btnImgIconAtalhoLocal.FlatStyle = FlatStyle.Flat;
+        btnImgIconAtalhoLocal.Location = new Point(536, 273);
+        btnImgIconAtalhoLocal.Name = "btnImgIconAtalhoLocal";
+        btnImgIconAtalhoLocal.Size = new Size(119, 25);
+        btnImgIconAtalhoLocal.TabIndex = 22;
+        btnImgIconAtalhoLocal.Text = "Procurar";
+        btnImgIconAtalhoLocal.UseVisualStyleBackColor = false;
+        // 
+        // txtbxPathAtalho
+        // 
+        txtbxPathAtalho.backColor = Color.FromArgb(59, 58, 58);
+        txtbxPathAtalho.LblPlaceholder = "Caminho (.exe)";
+        txtbxPathAtalho.Location = new Point(13, 92);
+        txtbxPathAtalho.Multiline = false;
+        txtbxPathAtalho.Name = "txtbxPathAtalho";
+        txtbxPathAtalho.Password = false;
+        txtbxPathAtalho.Size = new Size(357, 36);
+        txtbxPathAtalho.TabIndex = 18;
+        txtbxPathAtalho.textColor = Color.DimGray;
+        txtbxPathAtalho.Texto = "";
+        // 
+        // txtbxNomeAtalho
+        // 
+        txtbxNomeAtalho.backColor = Color.FromArgb(59, 58, 58);
+        txtbxNomeAtalho.LblPlaceholder = "";
+        txtbxNomeAtalho.Location = new Point(13, 32);
+        txtbxNomeAtalho.Multiline = false;
+        txtbxNomeAtalho.Name = "txtbxNomeAtalho";
+        txtbxNomeAtalho.Password = false;
+        txtbxNomeAtalho.Size = new Size(482, 36);
+        txtbxNomeAtalho.TabIndex = 17;
+        txtbxNomeAtalho.textColor = Color.DimGray;
+        txtbxNomeAtalho.Texto = "";
+        // 
+        // lblNomeAtalho
+        // 
+        lblNomeAtalho.AutoSize = true;
+        lblNomeAtalho.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+        lblNomeAtalho.ForeColor = Color.Silver;
+        lblNomeAtalho.Location = new Point(13, 6);
+        lblNomeAtalho.Name = "lblNomeAtalho";
+        lblNomeAtalho.Size = new Size(173, 30);
+        lblNomeAtalho.TabIndex = 2;
+        lblNomeAtalho.Text = "Nome do atalho";
+        // 
+        // btnImgAtalhoOnline
+        // 
+        btnImgAtalhoOnline.BackColor = Color.FromArgb(59, 58, 58);
+        btnImgAtalhoOnline.FlatAppearance.BorderSize = 0;
+        btnImgAtalhoOnline.FlatStyle = FlatStyle.Flat;
+        btnImgAtalhoOnline.Location = new Point(412, 216);
+        btnImgAtalhoOnline.Name = "btnImgAtalhoOnline";
+        btnImgAtalhoOnline.Size = new Size(119, 25);
+        btnImgAtalhoOnline.TabIndex = 8;
+        btnImgAtalhoOnline.Text = "Pesquisar online";
+        btnImgAtalhoOnline.UseVisualStyleBackColor = false;
+        // 
+        // btnProcurarArq
+        // 
+        btnProcurarArq.BackColor = Color.FromArgb(59, 58, 58);
+        btnProcurarArq.FlatAppearance.BorderSize = 0;
+        btnProcurarArq.FlatStyle = FlatStyle.Flat;
+        btnProcurarArq.Location = new Point(376, 100);
+        btnProcurarArq.Name = "btnProcurarArq";
+        btnProcurarArq.Size = new Size(119, 25);
+        btnProcurarArq.TabIndex = 5;
+        btnProcurarArq.Text = "Procurar";
+        btnProcurarArq.UseVisualStyleBackColor = false;
+        // 
+        // lblArtistaMusica
+        // 
+        lblArtistaMusica.AutoSize = true;
+        lblArtistaMusica.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+        lblArtistaMusica.ForeColor = Color.Silver;
+        lblArtistaMusica.Location = new Point(11, 123);
+        lblArtistaMusica.Name = "lblArtistaMusica";
+        lblArtistaMusica.Size = new Size(223, 30);
+        lblArtistaMusica.TabIndex = 7;
+        lblArtistaMusica.Text = "Parametros do atalho";
+        // 
+        // btnImgAtalhoLocal
+        // 
+        btnImgAtalhoLocal.BackColor = Color.FromArgb(59, 58, 58);
+        btnImgAtalhoLocal.FlatAppearance.BorderSize = 0;
+        btnImgAtalhoLocal.FlatStyle = FlatStyle.Flat;
+        btnImgAtalhoLocal.Location = new Point(536, 216);
+        btnImgAtalhoLocal.Name = "btnImgAtalhoLocal";
+        btnImgAtalhoLocal.Size = new Size(119, 25);
+        btnImgAtalhoLocal.TabIndex = 9;
+        btnImgAtalhoLocal.Text = "Procurar";
+        btnImgAtalhoLocal.UseVisualStyleBackColor = false;
+        // 
+        // lblPathAtalho
+        // 
+        lblPathAtalho.AutoSize = true;
+        lblPathAtalho.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+        lblPathAtalho.ForeColor = Color.Silver;
+        lblPathAtalho.Location = new Point(13, 65);
+        lblPathAtalho.Name = "lblPathAtalho";
+        lblPathAtalho.Size = new Size(201, 30);
+        lblPathAtalho.TabIndex = 3;
+        lblPathAtalho.Text = "Caminho do atalho";
+        // 
+        // btnCancelarAtalho
+        // 
+        btnCancelarAtalho.BackColor = Color.FromArgb(59, 58, 58);
+        btnCancelarAtalho.FlatStyle = FlatStyle.Flat;
+        btnCancelarAtalho.Location = new Point(536, 459);
+        btnCancelarAtalho.Name = "btnCancelarAtalho";
+        btnCancelarAtalho.Size = new Size(119, 41);
+        btnCancelarAtalho.TabIndex = 12;
+        btnCancelarAtalho.Text = "Cancelar";
+        btnCancelarAtalho.UseVisualStyleBackColor = false;
+        // 
+        // btnSalvarAtalho
+        // 
+        btnSalvarAtalho.BackColor = Color.FromArgb(59, 58, 58);
+        btnSalvarAtalho.FlatStyle = FlatStyle.Flat;
+        btnSalvarAtalho.Location = new Point(411, 459);
+        btnSalvarAtalho.Name = "btnSalvarAtalho";
+        btnSalvarAtalho.Size = new Size(119, 41);
+        btnSalvarAtalho.TabIndex = 11;
+        btnSalvarAtalho.Text = "Salvar";
+        btnSalvarAtalho.UseVisualStyleBackColor = false;
         // 
         // Form2
         // 
-        ClientSize = new Size(677, 553);
-        Controls.Add(tabAbasCadastros);
+        BackColor = Color.FromArgb(21, 22, 23);
+        ClientSize = new Size(694, 613);
+        Controls.Add(titleWindow);
+        Controls.Add(titleBar);
+        FormBorderStyle = FormBorderStyle.None;
         MaximizeBox = false;
         MinimizeBox = false;
         Name = "Form2";
         Text = "Cadastro de Atalho";
-        ((System.ComponentModel.ISupportInitialize)pictureImgGame).EndInit();
-        ((System.ComponentModel.ISupportInitialize)pictureIconGame).EndInit();
-        tabAbasCadastros.ResumeLayout(false);
-        tabPageCdtAtalho.ResumeLayout(false);
-        tabPageCdtAtalho.PerformLayout();
-        tabPageCdtApps.ResumeLayout(false);
-        tabPageCdtApps.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)picImgIconeApp).EndInit();
+        ((System.ComponentModel.ISupportInitialize)picImgAtalho).EndInit();
+        ((System.ComponentModel.ISupportInitialize)picImgIconAtalho).EndInit();
+        titleWindow.ResumeLayout(false);
+        pnlCdtAplicativo.ResumeLayout(false);
+        pnlCdtAplicativo.PerformLayout();
+        panel1.ResumeLayout(false);
+        ((System.ComponentModel.ISupportInitialize)picPageAtalhos).EndInit();
+        ((System.ComponentModel.ISupportInitialize)picPageAplicativos).EndInit();
+        pnlCdtAtalho.ResumeLayout(false);
+        pnlCdtAtalho.PerformLayout();
         ResumeLayout(false);
     }
 
     #endregion
-
-    private TextBox nomeGame;
-    private TextBox caminhoGame;
     private OpenFileDialog openFileDialog1;
-    private Label nomedojogo;
-    private Label caminhodojogo;
-    private Button btnSalvar;
-    private Button btnCancelar;
-    private Label parametrodojogo;
-    private TextBox parametroGame;
-    private Button btnProcurarArq;
-    private Label imgdoJogo;
-    private TextBox imgGame;
-    private Button btnImgLocal;
-    private Button btnImgGoogle;
-    private PictureBox pictureImgGame;
-    private Button btnImportAtalho;
-    private Button btnIconGoogle;
-    private Button btnIconLocal;
-    private Label iconDoJogo;
-    private TextBox iconGame;
-    private PictureBox pictureIconGame;
-    private TabControl tabAbasCadastros;
-    private TabPage tabPageCdtAtalho;
-    private TabPage tabPageCdtApps;
-    private Label lblNomeApp;
     private PictureBox picImgIconeApp;
-    private TextBox txtbxNomeApp;
+    private PictureBox picImgIconAtalho;
+    private Button btnSalvarAtalho;
+    private Button btnImportAtalho;
+    private PictureBox picImgAtalho;
+    private Button btnImgAtalhoOnline;
+    private Jasper.NthControls.TitleBarPersonalizada titleBar;
+    private Panel titleWindow;
+    private Panel panel1;
+    private PictureBox picPageAtalhos;
+    private Button btnPageAtalhos;
+    private PictureBox picPageAplicativos;
+    private Button btnPageAplicativo;
+    private Panel pnlCdtAtalho;
+    private Label lblNomeDosArtistas;
+    private Label lblImgAtalho;
+    private Jasper.NthControls.CustomTextbox txtbxImgMusica;
+    private Jasper.NthControls.CustomTextbox txtbxImgAtalho;
+    private Jasper.NthControls.CustomTextbox txtbxPathAtalho;
+    private Jasper.NthControls.CustomTextbox txtbxNomeAtalho;
+    private Label lblNomeAtalho;
+    private PictureBox picImgMusica;
+    private Button btnImgMusicaOnline;
+    private Button btnProcurarArq;
+    private Label lblArtistaMusica;
+    private Button btnImgAtalhoLocal;
+    private Label lblPathAtalho;
+    private Button btnCancelarAtalho;
+    private Jasper.NthControls.CustomTextbox txtbxParamAtalho;
+    private Label lblIconAtalho;
+    private Jasper.NthControls.CustomTextbox txtbxImgIconAtalho;
+    private Button btnImgIconAtalhoOnline;
+    private Button btnImgIconAtalhoLocal;
+    private Panel pnlCdtAplicativo;
+    private Jasper.NthControls.CustomTextbox txtbxImgIconeApp;
+    private Jasper.NthControls.CustomTextbox txtbxURLApp;
+    private Jasper.NthControls.CustomTextbox txtbxNomeApp;
+    private Label lblNomeApp;
+    private Button btnAjudaApp;
     private Button btnIconOnlineApp;
-    private TextBox txtbxURLApp;
+    private Button btnURLExtApp;
+    private Label lblImgIconeApp;
     private Button btnIconLocalApp;
     private Label lblURLApp;
-    private Label lblImgIconeApp;
-    private Button btnSalvarApp;
-    private TextBox txtbxImgIconeApp;
     private Button btnCancelarApp;
-    private Button btnAjudaApp;
-    private Button btnURLExtApp;
+    private Button btnSalvarApp;
 }

@@ -17,7 +17,7 @@ public partial class Form4 : Form
 
         lblTelaColaWeb.Text = acaoAtual;
 
-        picImagemDaWeb.Image = Image.FromFile(Referencias.caminhoImgPadrao);
+        picImagemDaWeb.Image = Properties.Resources.Morgan;
 
         txtbxURLWeb.KeyDown += (s, e) => {if(e.KeyCode == Keys.Enter){BaixarImgs(txtbxURLWeb.Text);}};
         txtbxURLWeb.TextChanged += (s, e) => BaixarImgs(txtbxURLWeb.Text);
@@ -30,7 +30,7 @@ public partial class Form4 : Form
 
         lblTelaColaWeb.Text = acaoAtual;
 
-        picImagemDaWeb.Image = Image.FromFile(Referencias.caminhoImgPadrao);
+        picImagemDaWeb.Image = Properties.Resources.Morgan;
     }
 
     private void DefinirGatilhos()
@@ -94,11 +94,10 @@ public partial class Form4 : Form
         {
             string formato = await DetectarFormatoAsync(pathToImg);
             bool eIcone = lblTelaColaWeb.Text.Contains("icone");
-            byte[] bytesDaImg = new byte[0];
             
             if (string.IsNullOrEmpty(pathToImg))
             {
-                picImagemDaWeb.Image = Image.FromFile(Referencias.caminhoImgPadrao);
+                picImagemDaWeb.Image = Properties.Resources.Morgan;
                 return;
             }
 
@@ -118,7 +117,7 @@ public partial class Form4 : Form
             else if (formato == "BASE64")
             {
                 var base64Data = pathToImg.Split(',')[1];
-                bytesDaImg = Convert.FromBase64String(base64Data);
+                byte[] bytesDaImg = Convert.FromBase64String(base64Data);
 
                 using (MemoryStream stream = new MemoryStream(bytesDaImg))
                 {
@@ -138,7 +137,7 @@ public partial class Form4 : Form
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    bytesDaImg = await client.GetByteArrayAsync(pathToImg);
+                    byte[] bytesDaImg = await client.GetByteArrayAsync(pathToImg);
 
                     using (MemoryStream stream = new MemoryStream(bytesDaImg))
                     {
@@ -165,8 +164,6 @@ public partial class Form4 : Form
                         Bitmap bitmap = new Bitmap(imagem);
                         bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
 
-                        bytesDaImg = ms.ToArray();
-
                         picImagemDaWeb.Image = bitmap;
                     }
                 }    
@@ -180,8 +177,6 @@ public partial class Form4 : Form
                     {
                         Bitmap bitmap = new Bitmap(imagem);
                         bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-
-                        bytesDaImg = ms.ToArray();
 
                         picImagemDaWeb.Image = bitmap;
                     }

@@ -47,6 +47,9 @@ partial class Form3
         pnlAppTransition = new System.Windows.Forms.Timer(components);
         lblClockAtalho = new Label();
         lblDataAtalhos = new Label();
+        lblUltimaSessao = new Label();
+        lblDuracaoSessao = new Label();
+        lblDataSessao = new Label();
         ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
         ((System.ComponentModel.ISupportInitialize)iconPic).BeginInit();
         ((System.ComponentModel.ISupportInitialize)appIcon).BeginInit();
@@ -272,9 +275,59 @@ partial class Form3
         lblDataAtalhos.Text = "12 de setembro de 2012";
         lblDataAtalhos.TextAlign = ContentAlignment.MiddleCenter;
         // 
+        // lblUltimaSessao
+        // 
+        lblUltimaSessao.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+        lblUltimaSessao.AutoSize = true;
+        lblUltimaSessao.BackColor = Color.Transparent;
+        lblUltimaSessao.FlatStyle = FlatStyle.Flat;
+        lblUltimaSessao.Font = new Font("Segoe UI", 24F, FontStyle.Bold, GraphicsUnit.Point, 0);
+        lblUltimaSessao.ForeColor = SystemColors.ControlDarkDark;
+        lblUltimaSessao.Location = new Point(69, 535);
+        lblUltimaSessao.Name = "lblUltimaSessao";
+        lblUltimaSessao.Size = new Size(233, 45);
+        lblUltimaSessao.TabIndex = 25;
+        lblUltimaSessao.Text = "Ultima sessão:";
+        lblUltimaSessao.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // lblDuracaoSessao
+        // 
+        lblDuracaoSessao.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+        lblDuracaoSessao.AutoSize = true;
+        lblDuracaoSessao.BackColor = Color.Transparent;
+        lblDuracaoSessao.FlatStyle = FlatStyle.Flat;
+        lblDuracaoSessao.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
+        lblDuracaoSessao.ForeColor = SystemColors.ControlDark;
+        lblDuracaoSessao.Location = new Point(73, 571);
+        lblDuracaoSessao.Name = "lblDuracaoSessao";
+        lblDuracaoSessao.RightToLeft = RightToLeft.No;
+        lblDuracaoSessao.Size = new Size(137, 28);
+        lblDuracaoSessao.TabIndex = 26;
+        lblDuracaoSessao.Text = "Durou: 2h32m";
+        lblDuracaoSessao.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // lblDataSessao
+        // 
+        lblDataSessao.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+        lblDataSessao.AutoSize = true;
+        lblDataSessao.BackColor = Color.Transparent;
+        lblDataSessao.FlatStyle = FlatStyle.Flat;
+        lblDataSessao.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+        lblDataSessao.ForeColor = SystemColors.ControlDark;
+        lblDataSessao.Location = new Point(75, 597);
+        lblDataSessao.Name = "lblDataSessao";
+        lblDataSessao.RightToLeft = RightToLeft.No;
+        lblDataSessao.Size = new Size(159, 21);
+        lblDataSessao.TabIndex = 27;
+        lblDataSessao.Text = "Dia: 12/12/24 - 12:33";
+        lblDataSessao.TextAlign = ContentAlignment.MiddleRight;
+        // 
         // Form3
         // 
         ClientSize = new Size(1669, 726);
+        Controls.Add(lblUltimaSessao);
+        Controls.Add(lblDataSessao);
+        Controls.Add(lblDuracaoSessao);
         Controls.Add(lblDataAtalhos);
         Controls.Add(lblClockAtalho);
         Controls.Add(picPuxarApps);
@@ -306,6 +359,9 @@ partial class Form3
         picPuxarApps.Parent = pictureBox1;
         lblClockAtalho.Parent = pictureBox1;
         lblDataAtalhos.Parent = pictureBox1;
+        lblDataSessao.Parent = pictureBox1;
+        lblUltimaSessao.Parent = pictureBox1;
+        lblDuracaoSessao.Parent = pictureBox1;
         ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
         ((System.ComponentModel.ISupportInitialize)iconPic).EndInit();
         ((System.ComponentModel.ISupportInitialize)appIcon).EndInit();
@@ -328,6 +384,9 @@ partial class Form3
         picPuxarApps.Parent = pictureBox1;
         lblClockAtalho.Parent = pictureBox1;
         lblDataAtalhos.Parent = pictureBox1;
+        lblDataSessao.Parent = pictureBox1;
+        lblUltimaSessao.Parent = pictureBox1;
+        lblDuracaoSessao.Parent = pictureBox1;
     */
 
     #endregion
@@ -358,4 +417,7 @@ partial class Form3
     private System.Windows.Forms.Timer pnlAppTransition;
     private Label lblClockAtalho;
     private Label lblDataAtalhos;
+    private Label lblUltimaSessao;
+    private Label lblDuracaoSessao;
+    private Label lblDataSessao;
 }
