@@ -1,17 +1,15 @@
 namespace PlaySO;
 using System.Windows.Forms;
-using Microsoft.Data.Sqlite;
 using System.Drawing;
 using System.Collections;
 using System.Diagnostics;
 using Microsoft.Win32;
 using System.Security.Principal;
 using System;
-using System.IO;
 using System.Drawing.Drawing2D;
 using System.Timers;
 using System.Runtime.InteropServices;
-using PlaySO.Properties;
+using SharpDX.DirectInput;
 
 public partial class Form3 : Form
 {
@@ -22,6 +20,7 @@ public partial class Form3 : Form
     private int idAtual = 1;
     // Bandeja ========================
     private NotifyIcon notifyIcon;
+    private bool abrindoOJogo;
     // Painel APPS ====================
     private bool appsOcultos = true;
     int heightPnlApps;
@@ -29,6 +28,13 @@ public partial class Form3 : Form
     private static System.Timers.Timer temporizadorDoRelogio, timerProcessoEstabilizar;
     private static DateTime horario;
     private SynchronizationContext _syncContext;
+    // Controle =======================
+    private DirectInput _directInput;
+    private Joystick _joystick;
+    private System.Windows.Forms.Timer timerControle;
+    private IntPtr _notificationHandle;
+    private float appAtual = 0, appCount = 0;
+    private List<int> idsApps = new List<int>();
     // Hotkeys e DLL ==================
     private const int WM_HOTKEY = 0x0312;
 
@@ -40,6 +46,17 @@ public partial class Form3 : Form
     private static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
     [DllImport("user32.dll")]
     private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, IntPtr NotificationFilter, uint Flags);
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern bool UnregisterDeviceNotification(IntPtr Handle);
+    private static readonly Guid GUID_DEVINTERFACE_HID = new Guid("4D1E55B2-F16F-11CF-88CB-001111000030");
+
+    private const int WM_DEVICECHANGE = 0x0219;
+    private const int DBT_DEVICEARRIVAL = 0x8000;
+    private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
+    private const int DBT_DEVTYP_DEVICEINTERFACE = 0x0005;
+    private const int DEVICE_NOTIFY_WINDOW_HANDLE = 0x0000;
 
     public Form3()
     {
@@ -56,8 +73,13 @@ public partial class Form3 : Form
 
         CriarRelogio();
 
-        RegisterHotKey(this.Handle, 1, 0, (uint)Keys.NumPad5);                                              //Numpad5
-        RegisterHotKey(this.Handle, 2, (uint)ModifierKeys.Control | (uint)ModifierKeys.Alt, (uint)Keys.T); //Ctrl+Alt+T
+        InicializarControle();
+        RegisterForDeviceNotifications();
+        IniciarTimerMonitoramentoControle();
+
+        RegisterHotKey(this.Handle, 1, (uint)ModifierKeys.Control, (uint)Keys.NumPad5);                     //Ctrl+Numpad5 - Fecha atalho
+        RegisterHotKey(this.Handle, 2, (uint)ModifierKeys.Alt, (uint)Keys.NumPad5);                         //Alt+Numpad5  - Exibe app
+        RegisterHotKey(this.Handle, 3, (uint)ModifierKeys.Control | (uint)ModifierKeys.Alt, (uint)Keys.T);  //Ctrl+Alt+T   - Fecha app
     }
 
     // Atalho para voltar ao app minimizado //
@@ -80,13 +102,37 @@ public partial class Form3 : Form
             int idDoAtalho = m.WParam.ToInt32();
             if (idDoAtalho == 1)
             {
-                FecharAtalho();
-                this.Show();
-                this.WindowState = FormWindowState.Maximized;
+                var resultado = MessageBox.Show("Deseja Fechar o jogo? Os dados não salvos serão perdidos", "Confirmação", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                if(resultado == DialogResult.OK){
+                    FecharAtalho();
+                    this.TopMost = true;
+                    this.Focus();
+                    RestaurarPlayOS(null, null);
+                    this.TopMost = false;
+                }
             }
             else if (idDoAtalho == 2)
             {
-                MessageBox.Show("n fechar");
+                this.TopMost = true; // Garante que fique sobre todas as janelas
+                this.Focus();
+                RestaurarPlayOS(null, null);
+                this.TopMost = false;
+            }
+            else if (idDoAtalho == 3)
+            {
+                Application.Exit();
+            }
+        }
+        if (m.Msg == WM_DEVICECHANGE)
+        {
+            if (m.WParam.ToInt32() == DBT_DEVICEARRIVAL)
+            {
+                Console.WriteLine("Novo dispositivo conectado.");
+                DetectJoystick();
+            }
+            else if (m.WParam.ToInt32() == DBT_DEVICEREMOVECOMPLETE)
+            {
+                Console.WriteLine("Dispositivo desconectado.");
             }
         }
     }
@@ -143,6 +189,33 @@ public partial class Form3 : Form
         }
 
         return false;
+    }
+
+    // Verificar Conexão de algum controle //
+    
+    [StructLayout(LayoutKind.Sequential)]
+    private struct DEV_BROADCAST_DEVICEINTERFACE
+    {
+        public int dbcc_size;
+        public int dbcc_devicetype;
+        public int dbcc_reserved;
+        public Guid dbcc_classguid;
+        public short dbcc_name;
+    }
+    private void RegisterForDeviceNotifications()
+    {
+        var dbi = new DEV_BROADCAST_DEVICEINTERFACE
+        {
+            dbcc_size = Marshal.SizeOf(typeof(DEV_BROADCAST_DEVICEINTERFACE)),
+            dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE,
+            dbcc_classguid = GUID_DEVINTERFACE_HID
+        };
+
+        IntPtr buffer = Marshal.AllocHGlobal(Marshal.SizeOf(dbi));
+        Marshal.StructureToPtr(dbi, buffer, true);
+
+        _notificationHandle = RegisterDeviceNotification(this.Handle, buffer, DEVICE_NOTIFY_WINDOW_HANDLE);
+        Marshal.FreeHGlobal(buffer);
     }
 
     // Substituir acao das teclas //
@@ -254,6 +327,14 @@ public partial class Form3 : Form
         CriarNotificacao();
         notifyIcon.ShowBalloonTip(1000, "Aplicativo Minimizado", "Clique para restaurar", ToolTipIcon.Info);
         timerProcessoEstabilizar.Enabled = false;
+        abrindoOJogo = false;
+
+        btnAbrir.Text = "Voltar ao jogo";
+        btnAbrir.Click -= BtnAbrirAtalho;
+        btnAbrir.Click += BtnMandarPraBandeja;
+    }
+    private void BtnMandarPraBandeja(object sender, EventArgs e){
+        MandarPraBandeja();
     }
 
     // Atalho atual -------------------------------------------------------------------------------
@@ -397,6 +478,10 @@ public partial class Form3 : Form
             this.Show();
             this.WindowState = FormWindowState.Maximized;
             RemoverNotificacao();
+
+            btnAbrir.Text = "Abrir";
+            btnAbrir.Click -= BtnMandarPraBandeja;
+            btnAbrir.Click += BtnAbrirAtalho;
         }, null);
     }
     private bool GameNext()
@@ -427,6 +512,7 @@ public partial class Form3 : Form
     {
         try
         {
+            abrindoOJogo = true;
             string caminho = atalhoAtual.getCaminhoAtalho();
             string permissao = "runas";
             string argumentacao = atalhoAtual.getParametroAtalho();
@@ -545,11 +631,13 @@ public partial class Form3 : Form
     }
     private void PnlPnlAddApp(List<Aplicativos> appsContext)
     {
+        idsApps.Clear();
         for (int i = 0; i < appsContext.Count; i++)
         {
             pnlApps.Controls.Add(CriacaoApp(appsContext[i], OrganizacaoApps(appsContext.Count, i + 1)));
+            idsApps.Add(appsContext[i].getIdAplicativo());
         }
-
+        appCount = appsContext.Count;
         appsContext.Clear();
     }
     private Point OrganizacaoApps(int quantidadeDeApps, int posicaoDoApp)
@@ -698,9 +786,9 @@ public partial class Form3 : Form
         popup.Controls.Add(lblEditarApp);
         popup.Controls.Add(lblApagarApp);
 
-        lblAbrirApp.Click += BtnAbrirAplicativos;
-        lblEditarApp.Click += BtnEditarAplicativos;
-        lblApagarApp.Click += (s, e) => pnlApps.Controls.Clear();
+        lblAbrirApp.Click += (s,e) => {BtnAbrirAplicativos(s,e);popup.Close();};
+        lblEditarApp.Click += (s,e) => {BtnEditarAplicativos(s,e);popup.Close();};
+        lblApagarApp.Click += (s,e) => {BtnDeletarAplicativos(s,e);popup.Close();};
 
         popup.Location = Cursor.Position;
 
@@ -768,6 +856,7 @@ public partial class Form3 : Form
         {
             id = int.Parse(lbl.Name.Split(">")[1]);
         }
+        else {id = idsApps[(int)appAtual];}
 
         try
         {
@@ -788,7 +877,7 @@ public partial class Form3 : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Erro ao abrir o atalho: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show($"Erro ao abrir o aplicativo: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
     private void BtnEditarAplicativos(object sender, EventArgs e)
@@ -800,6 +889,38 @@ public partial class Form3 : Form
         telaCadastro.FormClosed += (s, e) => PegarApps();
         telaCadastro.Owner = this;
         telaCadastro.Show();
+    }
+    private void BtnDeletarAplicativos(object sender, EventArgs e)
+    {
+        PictureBox pic = sender as PictureBox;
+        Label lbl = sender as Label;
+        int id = 0;
+        if (pic != null && pic.Name.Contains(">"))
+        {
+            id = int.Parse(pic.Name.Split(">")[1]);
+        }
+        else
+        if (lbl != null && lbl.Name.Contains(">"))
+        {
+            id = int.Parse(lbl.Name.Split(">")[1]);
+        }
+        try
+        {
+            Aplicativos.Deletar(id);
+            PegarApps();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erro ao deletar o aplicativo: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+    private void VisualizarEscolhaViaControle(){
+        List<Control> ctrls = new List<Control>();
+        foreach (Control ctrl in pnlApps.Controls){
+            ctrls.Add(ctrl);
+            ctrl.BackColor = Color.Transparent;
+        }
+        ctrls[(int)appAtual].BackColor = Color.FromArgb(67, 0, 0, 0);
     }
 
     // Tratamento pictureBoxes --------------------------------------------------------------------
@@ -1013,4 +1134,96 @@ public partial class Form3 : Form
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
     }
+
+    // Controles ----------------------------------------------------------------------------------
+    private void IniciarTimerMonitoramentoControle(){
+        timerControle = new System.Windows.Forms.Timer { Interval = 16 };
+        timerControle.Tick += ControleInputs;
+        timerControle.Start();
+    }
+    private void InicializarControle()
+    {
+        _directInput = new DirectInput();
+        var joystickGuid = Guid.Empty;
+
+        foreach (var deviceInstance in _directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AttachedOnly))
+        {
+            joystickGuid = deviceInstance.InstanceGuid;
+        }
+
+        if (joystickGuid == Guid.Empty)
+        {
+            return;
+        }
+
+        _joystick = new Joystick(_directInput, joystickGuid);
+        _joystick.Acquire();
+    }
+    private void DetectJoystick()
+    {
+        foreach (var deviceInstance in _directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AttachedOnly))
+        {
+            var joystickGuid = deviceInstance.InstanceGuid;
+
+            if (joystickGuid != Guid.Empty)
+            {
+                //MessageBox.Show("Controle encontrado: " + deviceInstance.InstanceName);
+                _joystick = new Joystick(_directInput, joystickGuid);
+                _joystick.Acquire();
+
+                IniciarTimerMonitoramentoControle();
+            }
+        }
+    }
+    private void ControleInputs(object sender, EventArgs e)
+    {
+        try
+        {            
+            if (_joystick == null) return;
+
+            _joystick.Poll();
+            var state = _joystick.GetCurrentState();
+
+            if (state == null) return;
+
+            // Obter valores dos botoes
+            var buttons = state.Buttons;
+
+            // Obter valores das setas
+            var dPad = state.PointOfViewControllers[0];
+
+            // Obter valores dos analógicos
+            var xAnalog = state.X;
+            var yAnalog = state.Y;
+            var zAnalog = state.Z;
+            var rzAnalog = state.RotationZ;
+
+            // Normalizar valores (-1.0 a 1.0)
+            float leftX = (xAnalog - 32767f) / 32767f;
+            float leftY = (yAnalog - 32767f) / 32767f;
+            float rightX = (zAnalog - 32767f) / 32767f;
+            float rightY = (rzAnalog - 32767f) / 32767f;
+
+            // Executar métodos dependendo dos valores
+            if (leftX > 0.5 || dPad == 9000) MoveRight();
+            else if (leftX < -0.5 || dPad == 27000) MoveLeft();
+
+            if (leftY > 0.5 || dPad == 18000) MoveUp();
+            else if (leftY < -0.5 || dPad == 0) MoveDown();
+
+            if (buttons.Length > 1 && buttons[1])BtnX();
+            if (buttons.Length > 1 && buttons[2])BtnO();
+        }
+        catch (SharpDX.SharpDXException)
+        {
+            timerControle.Enabled = false;
+            MessageBox.Show("Controle desconectado.");
+        }
+    }
+    private void MoveRight(){if(appsOcultos){GameNext();} else {appAtual += 0.2f;if(appAtual>=appCount){appAtual = appCount - 1;} VisualizarEscolhaViaControle();}}
+    private void MoveLeft(){if(appsOcultos){GamePrev();} else {appAtual -= 0.2f; if(appAtual<=0){appAtual = 0;} VisualizarEscolhaViaControle();}}
+    private void MoveUp(){appsOcultos = true; pnlAppTransition.Start(); heightPnlApps = pnlApps.Size.Height;}
+    private void MoveDown(){appsOcultos = false; pnlAppTransition.Start(); heightPnlApps = pnlApps.Size.Height;}
+    private void BtnX(){if(appsOcultos){if(abrindoOJogo == false){BtnAbrirAtalho(null, null);}} else {BtnAbrirAplicativos(null, null);}}
+    private void BtnO() => this.Close();
 }

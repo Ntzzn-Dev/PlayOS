@@ -116,6 +116,29 @@ public class Aplicativos {
             MessageBox.Show($"Erro ao alterar o atalho: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
+    public static void Deletar(int idDeExclusao){
+        try
+        {
+            using (var connection = new SqliteConnection(Referencias.connectionString))
+            {
+                connection.Open();
+                string deleteCommand = "DELETE FROM AplicativosExtras WHERE id = @id";
+
+                using (var command = new SqliteCommand(deleteCommand, connection))
+                {
+                    command.Parameters.AddWithValue("@id", idDeExclusao);
+
+                    int rowsAffected = command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Exibe uma mensagem de erro caso ocorra alguma exceção
+            MessageBox.Show($"Erro ao excluir o atalho: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
     public static ArrayList ConsultarIDs(){
         ArrayList idsApps = new ArrayList();
         try
@@ -385,14 +408,32 @@ public class Atalhos {
     public static void SessaoIniciada(string dataInicio, int idatual){
         try
         {
+            string datasAcumuladas = "";
             using (var connection = new SqliteConnection(Referencias.connectionString))
             {
                 connection.Open();
+                string selectCommand = "SELECT DataTodasSessoes FROM AtalhosdeAplicativos WHERE Id = @id";
+                using (var command = new SqliteCommand(selectCommand, connection))
+                {
+                    command.Parameters.AddWithValue("@id", idatual);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            datasAcumuladas = reader.GetString(0);
+                        }
+                    }
+                }
 
-                string updateCommand = "UPDATE AtalhosdeAplicativos SET DataUltimaSessao = @dataSessao WHERE Id = @id";
+                if(datasAcumuladas.Equals("sessao não iniciada ainda")){
+                    datasAcumuladas = "";
+                }
+
+                string updateCommand = "UPDATE AtalhosdeAplicativos SET DataUltimaSessao = @dataSessao, DataTodasSessoes = @dataSessoes WHERE Id = @id";
                 using (var command = new SqliteCommand(updateCommand, connection))
                 {
                     command.Parameters.AddWithValue("@dataSessao", dataInicio);
+                    command.Parameters.AddWithValue("@dataSessoes", string.Join(", ", new[] { datasAcumuladas, dataInicio }.Where(s => !string.IsNullOrEmpty(s))));
                     command.Parameters.AddWithValue("@id", idatual);
                     command.ExecuteNonQuery();
                 }
@@ -407,14 +448,35 @@ public class Atalhos {
     public static void SessaoFinalizada(string duracaoSessao, int idatual){
         try
         {
+            string horasNoBanco = "";
             using (var connection = new SqliteConnection(Referencias.connectionString))
             {
                 connection.Open();
+                string selectCommand = "SELECT TempoTodasSessoes FROM AtalhosdeAplicativos WHERE Id = @id";
+                using (var command = new SqliteCommand(selectCommand, connection))
+                {
+                    command.Parameters.AddWithValue("@id", idatual);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            horasNoBanco = reader.GetString(0);
+                        }
+                    }
+                }
 
-                string updateCommand = "UPDATE AtalhosdeAplicativos SET TempoUltimaSessao = @tempoSessao WHERE Id = @id";
+                TimeSpan tempoTotal = Referencias.StringToHorario(horasNoBanco);
+                TimeSpan tempoAtual = Referencias.StringToHorario(duracaoSessao);
+                
+                TimeSpan soma = tempoTotal + tempoAtual;
+
+                string horasAcumuladas = Referencias.HorarioToString(soma);
+
+                string updateCommand = "UPDATE AtalhosdeAplicativos SET TempoUltimaSessao = @tempoSessao, TempoTodasSessoes = @tempoSessoes WHERE Id = @id";
                 using (var command = new SqliteCommand(updateCommand, connection))
                 {
                     command.Parameters.AddWithValue("@tempoSessao", duracaoSessao);
+                    command.Parameters.AddWithValue("@tempoSessoes", horasAcumuladas);
                     command.Parameters.AddWithValue("@id", idatual);
                     command.ExecuteNonQuery();
                 }
@@ -494,5 +556,21 @@ public class Referencias{
             }
         }
         return new byte[0];
+    }
+    public static TimeSpan StringToHorario(string tempo)
+    {
+        string[] partes = tempo.Replace("h", ":").Replace("m", "").Split(':');
+        int horas = int.Parse(partes[0]);
+        int minutos = int.Parse(partes[1]);
+
+        return new TimeSpan(horas, minutos, 0);
+    }
+
+    public static string HorarioToString(TimeSpan tempo)
+    {
+        int horas = (int)tempo.TotalHours;
+        int minutos = tempo.Minutes;
+
+        return $"{horas}h{minutos:D2}m";
     }
 }

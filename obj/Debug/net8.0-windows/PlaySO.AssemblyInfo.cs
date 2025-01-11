@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PlaySO")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+956f6de3c7cc24e47fa4fbc0a1d8fe9ca23d03e7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cdc35b2155b16ae2019ba194da4976afe2654912")]
 [assembly: System.Reflection.AssemblyProductAttribute("PlaySO")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PlaySO")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

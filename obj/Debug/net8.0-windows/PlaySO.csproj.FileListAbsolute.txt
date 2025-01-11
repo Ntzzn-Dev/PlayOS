@@ -168,3 +168,5 @@ H:\Projects\CSharp\PlaySO\obj\Debug\net8.0-windows\PlaySO.sourcelink.json
 H:\Projects\CSharp\PlaySO\obj\Debug\net8.0-windows\Jasper.NthControls.CustomTextbox.resources
 H:\Projects\CSharp\PlaySO\obj\Debug\net8.0-windows\Jasper.NthControls.Popup.resources
 H:\Projects\CSharp\PlaySO\obj\Debug\net8.0-windows\Jasper.NthControls.TitleBarPersonalizada.resources
+H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\SharpDX.dll
+H:\Projects\CSharp\PlaySO\bin\Debug\net8.0-windows\SharpDX.DirectInput.dll
